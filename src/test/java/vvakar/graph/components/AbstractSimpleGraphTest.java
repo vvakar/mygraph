@@ -2,7 +2,9 @@ package vvakar.graph.components;
 
 import org.junit.Test;
 import vvakar.graph.interfaces.Edge;
+import vvakar.graph.interfaces.Graph;
 import vvakar.graph.interfaces.Vertex;
+import vvakar.graph.interfaces.VertexWeightBeans;
 
 import java.util.Collection;
 
@@ -17,20 +19,20 @@ import static org.junit.Assert.assertTrue;
 public abstract class AbstractSimpleGraphTest {
     protected Vertex v1 = GraphFactory.vertex("v1");
     protected Vertex v2 = GraphFactory.vertex("v2");
-    protected SimpleAbstractGraph graph;
+    protected Graph graph;
     Edge<Vertex> e;
 
     @Test
     public void testGetNeighborsOf_empty() {
-        Collection<Vertex> ns = graph.getNeighborsOf(v1);
+        VertexWeightBeans<Vertex> ns = graph.getNeighborsOf(v1);
         assertTrue(ns.isEmpty());
     }
     @Test
     public void testGetNeighborsOf_nonempty() {
         graph.put(e);
-        Collection<Vertex> ns = graph.getNeighborsOf(v1);
+        VertexWeightBeans<Vertex> ns = graph.getNeighborsOf(v1);
         assertEquals(1, ns.size());
-        assertEquals(v2, ns.iterator().next());
+        assertEquals(v2, ns.iterator().next().getVertex());
     }
 
 

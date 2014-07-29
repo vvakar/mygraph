@@ -13,10 +13,10 @@ public class GraphFactory {
         return new SimpleVertex(name);
     }
 
-    public static UndirectedEdge undirectedEdge(Vertex v1, Vertex v2) {
-        return new UndirectedEdge<Vertex>(v1, v2);
+    public static <V extends Vertex> UndirectedEdge<V> undirectedEdge(V v1, V v2) {
+        return new UndirectedEdge<V>(v1, v2);
     }
-    public static DirectedEdge directedEdge(Vertex v1, Vertex v2) {
-        return new DirectedEdge<Vertex>(v1, v2);
+    public static <V extends Vertex> DirectedEdge directedEdge(V v1, V v2) {
+        return new DirectedEdge<V>(v1, v2);
     }
 }

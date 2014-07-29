@@ -3,6 +3,7 @@ package vvakar.graph.traversal;
 import vvakar.graph.interfaces.Edge;
 import vvakar.graph.interfaces.Graph;
 import vvakar.graph.interfaces.Vertex;
+import vvakar.graph.interfaces.VertexWeightBean;
 
 import javax.annotation.Nullable;
 import java.util.ArrayDeque;
@@ -33,11 +34,12 @@ public class DepthFirstIterator<V extends Vertex, E extends Edge> extends Abstra
     public V next() {
         V previous = currentVertex;
         if(currentVertex != null) {
-            Collection<V> ns = graph.getNeighborsOf(currentVertex);
-            for(V v : ns) {
-                if(!seen.contains(v)) {
-                    stack.push(v);
-                    seen.add(v);
+            Iterable<VertexWeightBean<V>> ns = graph.getNeighborsOf(currentVertex);
+            for(VertexWeightBean<V> wb : ns) {
+                V vertex = wb.getVertex();
+                if(!seen.contains(vertex)) {
+                    stack.push(vertex);
+                    seen.add(vertex);
                 }
             }
 

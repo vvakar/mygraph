@@ -10,12 +10,19 @@ import vvakar.graph.interfaces.Vertex;
  */
 abstract class AbstractEdge<V extends Vertex> implements Edge<V> {
     private V v1, v2;
+    private int weight;
+    private static final int DEFAULT_WEIGHT = 1;
 
     AbstractEdge(V v1, V v2) {
+        this(v1, v2, DEFAULT_WEIGHT);
+    }
+
+    AbstractEdge(V v1, V v2, int weight) {
         Preconditions.checkNotNull(v1);
         Preconditions.checkNotNull(v2);
         this.v1 = v1;
         this.v2 = v2;
+        this.weight = weight;
     }
 
     @Override
@@ -27,15 +34,20 @@ abstract class AbstractEdge<V extends Vertex> implements Edge<V> {
         return v2;
     }
 
+    public int getWeight() {
+        return weight;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        AbstractEdge edge = (AbstractEdge) o;
+        AbstractEdge that = (AbstractEdge) o;
 
-        if (!v1.equals(edge.v1)) return false;
-        if (!v2.equals(edge.v2)) return false;
+        if (weight != that.weight) return false;
+        if (!v1.equals(that.v1)) return false;
+        if (!v2.equals(that.v2)) return false;
 
         return true;
     }
@@ -44,7 +56,7 @@ abstract class AbstractEdge<V extends Vertex> implements Edge<V> {
     public int hashCode() {
         int result = v1.hashCode();
         result = 31 * result + v2.hashCode();
+        result = 31 * result + weight;
         return result;
     }
-
 }

@@ -12,5 +12,7 @@ public interface Edge<V> {
 
     V getV2();
 
+    int getWeight();
+
     public Optional<V> getTargetIfOriginatorIs(V v);
 }

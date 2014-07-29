@@ -14,6 +14,10 @@ public class UndirectedEdge<V extends Vertex> extends AbstractEdge<V> {
         super(v1, v2);
     }
 
+    public UndirectedEdge(V v1, V v2, int weight) {
+        super(v1, v2, weight);
+    }
+
     public Optional<V> getTargetIfOriginatorIs(V v) {
         Preconditions.checkNotNull(v);
         V retval = null;

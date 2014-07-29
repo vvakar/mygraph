@@ -5,6 +5,8 @@ import com.google.common.base.Preconditions;
 import vvakar.graph.interfaces.Edge;
 import vvakar.graph.interfaces.Graph;
 import vvakar.graph.interfaces.Vertex;
+import vvakar.graph.interfaces.VertexWeightBean;
+import vvakar.graph.interfaces.VertexWeightBeans;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,8 +20,8 @@ import java.util.Set;
  *         Date: 7/27/14
  */
 public abstract class AbstractGraph<V extends Vertex, E extends Edge<V>> implements Graph<V,E> {
-    private final Set<V> vertices;
-    private final List<E> edges;
+    protected final Set<V> vertices;
+    protected final List<E> edges;
 
     public AbstractGraph() {
         vertices = new HashSet<V>();
@@ -32,18 +34,22 @@ public abstract class AbstractGraph<V extends Vertex, E extends Edge<V>> impleme
 
     /**
      * Find immediate neighbors of specified <code>Vertext</code>.
+     * @param v cannot be null
      */
     @Override
-    public Collection<V> getNeighborsOf(V v) {
-        Collection<V> retval = new ArrayList<V>();
+    public VertexWeightBeans<V> getNeighborsOf(V v) {
+        Preconditions.checkNotNull(v);
+
+//        Collection<VertexWeightBeansImpl<V>> coll = new ArrayList<VertexWeightBeansImpl<V>>();
+        VertexWeightBeansImpl<V> vertexWeightBeans = new VertexWeightBeansImpl<V>();
+        // FIXME: move edge information into the vertices
         for(E e : edges) {
             Optional<V> maybeV = e.getTargetIfOriginatorIs(v);
             if(maybeV.isPresent()) {
-                retval.add(maybeV.get());
+                vertexWeightBeans.add(maybeV.get(), e.getWeight());
             }
-
         }
-        return retval;
+        return vertexWeightBeans;
     }
 
     /**
