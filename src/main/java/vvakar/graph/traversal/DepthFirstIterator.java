@@ -7,10 +7,10 @@ import vvakar.graph.interfaces.VertexWeightBean;
 
 import javax.annotation.Nullable;
 import java.util.ArrayDeque;
-import java.util.Collection;
 import java.util.Deque;
 
 /**
+ * Iterate depth-first over the supplied graph. Has no notion of edge weight.
  * @author vvakar
  *         Date: 7/28/14
  */
