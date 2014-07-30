@@ -34,16 +34,16 @@ public class DepthFirstIterator<V extends Vertex, E extends Edge> extends Abstra
     public V next() {
         V previous = currentVertex;
         if(currentVertex != null) {
-            Iterable<VertexWeightBean<V>> ns = graph.getNeighborsOf(currentVertex);
-            for(VertexWeightBean<V> wb : ns) {
-                V vertex = wb.getVertex();
-                if(!seen.contains(vertex)) {
-                    stack.push(vertex);
-                    seen.add(vertex);
+                Iterable<VertexWeightBean<V>> ns = graph.getNeighborsOf(currentVertex);
+                for(VertexWeightBean<V> wb : ns) {
+                    V vertex = wb.getVertex();
+                    if(!seen.contains(vertex)) {
+                        stack.push(vertex);
+                        seen.add(vertex);
+                    }
                 }
-            }
 
-            currentVertex = stack.isEmpty() ? null : stack.pop();
+                currentVertex = stack.isEmpty() ? null : stack.pop();
         }
         return previous;
     }

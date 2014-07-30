@@ -19,4 +19,7 @@ public class GraphFactory {
     public static <V extends Vertex> DirectedEdge directedEdge(V v1, V v2) {
         return new DirectedEdge<V>(v1, v2);
     }
+    public static <V extends Vertex> DirectedEdge directedEdge(V v1, V v2, int weight) {
+        return new DirectedEdge<V>(v1, v2, weight);
+    }
 }
