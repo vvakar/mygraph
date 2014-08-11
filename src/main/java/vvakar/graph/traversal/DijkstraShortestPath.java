@@ -25,7 +25,6 @@ import java.util.PriorityQueue;
  */
 public class DijkstraShortestPath <V extends Vertex, E extends Edge> {
     private Graph<V,E> graph;
-    private List<DijkstraBean<V>> shortestPath;
 
     public DijkstraShortestPath(Graph<V, E> graph) {
         this.graph = graph;
@@ -64,8 +63,8 @@ public class DijkstraShortestPath <V extends Vertex, E extends Edge> {
                 }
             }
 
-            current = heap.poll().destination;
-        } while(!current.equals(end));
+            current = heap.isEmpty() ? null : heap.poll().destination;
+        } while(current != null && !current.equals(end));
         return composeShortestPath(map, start, end);
     }
 
@@ -73,10 +72,14 @@ public class DijkstraShortestPath <V extends Vertex, E extends Edge> {
         List<DijkstraBean<V>> list = new ArrayList<DijkstraBean<V>>();
 
         DijkstraBean<V> current = map.get(end);
-        do {
-            list.add(current);
-            current = map.get(current.via);
-        }while(!current.destination.equals(current.via));
+
+        if(current != null) {
+            while (!current.destination.equals(current.via)) {
+                list.add(current);
+                current = map.get(current.via);
+            }
+            list.add(current); // add the start node
+        }
 
         Collections.reverse(list);
         return list;
@@ -118,6 +121,15 @@ public class DijkstraShortestPath <V extends Vertex, E extends Edge> {
         public int compareTo(@NotNull DijkstraBean o) {
             Preconditions.checkNotNull(o);
             return this.weight - o.weight;
+        }
+
+        @Override
+        public String toString() {
+            return "DijkstraBean{" +
+                    "destination=" + destination +
+                    ", via=" + via +
+                    ", weight=" + weight +
+                    '}';
         }
     }
 }

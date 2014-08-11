@@ -57,6 +57,13 @@ public class DijkstraShortestPathTest {
     }
 
     @Test
+    public void testNoPath() {
+        DijkstraShortestPath dsp = new DijkstraShortestPath<Vertex, Edge<Vertex>>(nonEmptyGraph);
+        List<DijkstraShortestPath.DijkstraBean<Vertex>> list = dsp.getShortestPath(v2, v1);
+        assertTrue(list.isEmpty());
+    }
+
+    @Test
     public void testMulti() {
         DijkstraShortestPath dsp = new DijkstraShortestPath<Vertex, Edge<Vertex>>(nonEmptyGraph);
         List<DijkstraShortestPath.DijkstraBean<Vertex>> list = dsp.getShortestPath(v1, v5);
