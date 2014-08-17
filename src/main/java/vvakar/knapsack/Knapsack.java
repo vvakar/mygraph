@@ -3,7 +3,9 @@ package vvakar.knapsack;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -12,7 +14,47 @@ import java.util.Set;
  *         Date: 8/10/14
  */
 public class Knapsack {
-    public List<Integer> compute(int W, Item... items) {
+    /**
+     * Greedily favor highest v/w ratios until full.
+     * If there's one single item that's better than above, use that one single item instead.
+     */
+    public List<Integer> computeHeuristic(int W, boolean performStep3, Item... items) {
+        Arrays.sort(items, new Comparator<Item>() {
+            @Override
+            public int compare(Item o1, Item o2) {
+                return - Math.round((1.0f * o1.getValue()) / o1.getWeight() -
+                                  (1.0f * o2.getValue()) / o2.getWeight());
+            }
+        });
+
+
+        List<Integer> retval = Lists.newLinkedList();
+        int totalWeight = 0, totalValue = 0;
+        Item max = null;
+        for(Item item  : items) {
+            if(totalWeight + item.getWeight() <= W) {
+                totalWeight += item.getWeight();
+                totalValue += item.getValue();
+            }
+
+            retval.add(0, totalValue);
+
+            // track max value that fits
+            if(item.getWeight() <= W && (max == null || max.getValue() < item.getValue())) {
+                max = item;
+            }
+        }
+
+        if(performStep3 && max != null && totalValue < max.getValue()) {
+            retval.clear();
+            retval.add(max.getValue());
+        }
+
+        return retval;
+    }
+
+
+    public List<Integer> computeDP(int W, Item... items) {
         // initialize matrix
         int[][] matrix = new int[items.length+1][];
         for(int i = 0; i < matrix.length; ++i) {
