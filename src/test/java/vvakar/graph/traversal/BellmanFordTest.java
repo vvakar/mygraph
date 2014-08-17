@@ -75,13 +75,12 @@ public class BellmanFordTest {
         assertEquals(20, list.get(3).getTotalWeight());
     }
 
-    @Test
+    @Test(expected = RuntimeException.class)
     public void testHw1() throws Exception {
         BellmanFord.compute(getGraph("graph1.txt"), vertex("1"), vertex("2"));
     }
 
-
-    @Test
+    @Test(expected = RuntimeException.class)
     public void testHw2() throws Exception {
         BellmanFord.compute(getGraph("graph2.txt"), vertex("1"), vertex("2"));
     }
@@ -91,6 +90,10 @@ public class BellmanFordTest {
         BellmanFord.compute(getGraph("graph3.txt"), vertex("1"), vertex("2"));
     }
 
+    @Test
+    public void testHwMonster() throws Exception {
+        BellmanFord.compute(getGraph("graphmonster.txt"), vertex("1"), vertex("2"));
+    }
 
     private static SimpleDirectedGraph<Vertex> getGraph(String s ) throws IOException {
         LineReader lineReader = getReader(s);

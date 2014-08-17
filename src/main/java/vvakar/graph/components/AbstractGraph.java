@@ -32,6 +32,8 @@ public abstract class AbstractGraph<V extends Vertex, E extends Edge<V>> impleme
         return vertices;
     }
 
+    public Collection<E> getEdges() { return edges; }
+
     /**
      * Find immediate neighbors of specified <code>Vertext</code>.
      * @param v cannot be null

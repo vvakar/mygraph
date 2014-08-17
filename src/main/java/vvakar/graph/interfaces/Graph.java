@@ -10,6 +10,8 @@ import java.util.Collection;
 public interface Graph<V extends Vertex, E extends Edge> {
     Collection<V> getVertices();
 
+    Collection<E> getEdges();
+
     VertexWeightBeans<V> getNeighborsOf(V v);
 
     void put(E e);

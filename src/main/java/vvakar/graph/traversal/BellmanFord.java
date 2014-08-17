@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import vvakar.graph.components.DirectedEdge;
 import vvakar.graph.interfaces.Edge;
 import vvakar.graph.interfaces.Graph;
 import vvakar.graph.interfaces.Vertex;
@@ -19,8 +20,41 @@ import java.util.Set;
  * @author vvakar
  *         Date: 8/17/14
  */
-public class BellmanFord{
+public class BellmanFord {
+
     public static <V extends Vertex, E extends Edge> List<BellmanFordDistanceBean<V>> compute(Graph<V, E> graph, V start, V end) {
+        Map<V, BellmanFordDistanceBean<V>> currentWeights = Maps.newHashMap();
+
+        // prime:
+        currentWeights.put(start, new BellmanFordDistanceBean<V>(start, start, 0));
+
+        int iterationsRemaining = graph.getVertices().size();
+        while (iterationsRemaining >= 0) {
+            for (Edge<V> edge : graph.getEdges()) {
+                BellmanFordDistanceBean<V> toV1Bean = currentWeights.get(edge.getV1());
+                BellmanFordDistanceBean<V> toV2Bean = currentWeights.get(edge.getV2());
+
+                if (!(toV1Bean == null) && (toV2Bean == null || toV2Bean.getTotalWeight() > (toV1Bean.getTotalWeight() + edge.getWeight()))) {
+                    currentWeights.put(edge.getV2(), new BellmanFordDistanceBean<V>(edge.getV2(), edge.getV1(), toV1Bean.getTotalWeight() + edge.getWeight()));
+                }
+            }
+
+            --iterationsRemaining;
+        }
+
+        for (Edge<V> edge : graph.getEdges()) {
+            BellmanFordDistanceBean<V> toV1Bean = currentWeights.get(edge.getV1());
+            BellmanFordDistanceBean<V> toV2Bean = currentWeights.get(edge.getV2());
+
+            if (!(toV1Bean == null) && (toV2Bean == null || toV2Bean.getTotalWeight() > (toV1Bean.getTotalWeight() + edge.getWeight()))) {
+                throw new RuntimeException("Negative-weight cycle detected!");
+            }
+        }
+
+        return computePath(currentWeights, start, end);
+    }
+
+    public static <V extends Vertex, E extends Edge> List<BellmanFordDistanceBean<V>> computeBezVeze(Graph<V, E> graph, V start, V end) {
         Set<V> seen = Sets.newHashSetWithExpectedSize(graph.getVertices().size());
         Map<V, BellmanFordDistanceBean<V>> currentWeights = Maps.newHashMap();
         LinkedList<V> toSee = Lists.newLinkedList();
@@ -30,13 +64,13 @@ public class BellmanFord{
         int iterationsRemaining = graph.getVertices().size();
         V currentVertex = start;
 
-        while(iterationsRemaining >= 0 && currentVertex != null) {
+        while (iterationsRemaining >= 0 && currentVertex != null) {
             seen.add(currentVertex); // mark seen immediately in case there are loopbacks
 
             int currentWeight = currentWeights.get(currentVertex).getTotalWeight(); // must have been added already
             for (VertexWeightBean<V> neighbor : graph.getNeighborsOf(currentVertex)) {
                 V neighborVertex = neighbor.getVertex();
-                if(!seen.contains(neighborVertex)) {
+                if (!seen.contains(neighborVertex)) {
                     toSee.add(neighborVertex);
                     int neighborHopWeight = neighbor.getWeight();
                     BellmanFordDistanceBean<V> neighborTotalWeight = currentWeights.get(neighborVertex);
@@ -49,10 +83,10 @@ public class BellmanFord{
                 --iterationsRemaining;
             }
 
-            currentVertex = toSee.isEmpty()? null : toSee.removeFirst();
+            currentVertex = toSee.isEmpty() ? null : toSee.removeFirst();
         }
 
-        if(!toSee.isEmpty()) {
+        if (!toSee.isEmpty()) {
             throw new RuntimeException("CYCLES DETECTED!");
         }
 
@@ -67,11 +101,11 @@ public class BellmanFord{
         V endVertex = end;
         do {
             endBean = currentWeights.get(endVertex);
-            if(endBean != null) {
+            if (endBean != null) {
                 path.add(endBean);
                 endVertex = endBean.getVia();
             }
-        } while(endBean != null && !endBean.getVertex().equals(start));
+        } while (endBean != null && !endBean.getVertex().equals(start));
 
         Collections.reverse(path);
         return path;
