@@ -2,13 +2,15 @@ package vvakar.graph.interfaces;
 
 import com.google.common.base.Preconditions;
 
+import java.util.Comparator;
+
 /**
  * Vertex and a weight associated with it.
  * @author vvakar
  *         Date: 7/29/14
  */
 
-public class VertexWeightBean<V> {
+public class VertexWeightBean<V extends Vertex> {
     private V vertex;
     private int weight;
 
