@@ -3,6 +3,7 @@ package vvakar.graph.traversal;
 import com.google.common.io.LineReader;
 import org.junit.Before;
 import org.junit.Test;
+import vvakar.graph.Util;
 import vvakar.graph.components.DirectedEdge;
 import vvakar.graph.components.GraphFactory;
 import vvakar.graph.components.SimpleDirectedGraph;
@@ -77,40 +78,17 @@ public class BellmanFordTest {
 
     @Test(expected = RuntimeException.class)
     public void testHw1() throws Exception {
-        BellmanFord.compute(getGraph("graph1.txt"), vertex("1"), vertex("2"));
+        BellmanFord.compute(Util.getGraph("graph1.txt"), vertex("1"), vertex("2"));
     }
 
     @Test(expected = RuntimeException.class)
     public void testHw2() throws Exception {
-        BellmanFord.compute(getGraph("graph2.txt"), vertex("1"), vertex("2"));
+        BellmanFord.compute(Util.getGraph("graph2.txt"), vertex("1"), vertex("2"));
     }
 
     @Test
     public void testHw3() throws Exception {
-        BellmanFord.compute(getGraph("graph3.txt"), vertex("1"), vertex("2"));
-    }
-
-    @Test
-    public void testHwMonster() throws Exception {
-        BellmanFord.compute(getGraph("graphmonster.txt"), vertex("1"), vertex("2"));
-    }
-
-    private static SimpleDirectedGraph<Vertex> getGraph(String s ) throws IOException {
-        LineReader lineReader = getReader(s);
-        SimpleDirectedGraph<Vertex> graph = new SimpleDirectedGraph<Vertex>();
-
-        lineReader.readLine(); // ignore first
-        String line;
-        while( (line = lineReader.readLine()) != null) {
-            String[] vals = line.split(" ");
-            // tail head weight
-            graph.put(new DirectedEdge<Vertex>(vertex(vals[0]), vertex(vals[1]), Integer.parseInt(vals[2])));
-        }
-        return graph;
-    }
-
-    private static LineReader getReader(String s) throws IOException{
-        return new LineReader(new InputStreamReader(Thread.currentThread().getContextClassLoader().getResource(s).openStream()));
+        BellmanFord.compute(Util.getGraph("graph3.txt"), vertex("1"), vertex("2"));
     }
 
 }

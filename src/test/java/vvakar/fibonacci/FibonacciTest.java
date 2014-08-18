@@ -34,20 +34,20 @@ public class FibonacciTest {
 
 
     }
-
-    @Test
-    public void testJavaSort() {
-
-        benchmark(100000);
-        benchmark(1000000);
-        benchmark(10000000);
-        benchmark(100000000);
-        benchmark(200000000);
-        benchmark(300000000);
-        benchmark(400000000);
-        benchmark(500000000);
-
-    }
+//
+//    @Test
+//    public void testJavaSort() {
+//
+//        benchmark(100000);
+//        benchmark(1000000);
+//        benchmark(10000000);
+//        benchmark(100000000);
+//        benchmark(200000000);
+//        benchmark(300000000);
+//        benchmark(400000000);
+//        benchmark(500000000);
+//
+//    }
 
     private void benchmark(int TOTAL) {
         List<Integer> sortme = Lists.newArrayListWithCapacity(TOTAL);

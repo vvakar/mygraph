@@ -21,11 +21,11 @@ import java.util.Set;
  */
 public abstract class AbstractGraph<V extends Vertex, E extends Edge<V>> implements Graph<V,E> {
     protected final Set<V> vertices;
-    protected final List<E> edges;
+    protected final Set<E> edges;
 
     public AbstractGraph() {
         vertices = new HashSet<V>();
-        edges = new ArrayList<E>();
+        edges = new HashSet<E>();
     }
 
     public Collection<V> getVertices() {
@@ -77,11 +77,13 @@ public abstract class AbstractGraph<V extends Vertex, E extends Edge<V>> impleme
 
     private Optional<E> find(E e) {
         Preconditions.checkNotNull(e);
-        int i = edges.indexOf(e);
-        E opt = null;
-        if(i >= 0) {
-            opt = edges.get(i);
+        E opt;
+        if(edges.contains(e)) {
+            opt = e;
+        } else {
+            opt = null;
         }
+
         return Optional.fromNullable(opt);
     }
 }
