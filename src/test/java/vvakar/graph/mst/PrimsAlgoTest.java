@@ -97,9 +97,9 @@ public class PrimsAlgoTest {
 
 //    @Test
 //    public void testHwMonster() throws Exception {
-//        List<DirectedEdge<Vertex>> list = PrimsAlgo.compute(getGraph("graphmonster.txt"));
+//        List<DirectedEdge<Vertex>> list = PrimsAlgo.compute(Util.getGraph("graphmonster.txt"));
 //        int totalSize = PrimsAlgo.getTotalSize(list);
 //        System.out.println("Total size: " + totalSize);
 //    }
-//
+
 }
