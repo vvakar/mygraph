@@ -10,8 +10,10 @@ import vvakar.graph.interfaces.VertexWeightBeans;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -20,16 +22,16 @@ import java.util.Set;
  *         Date: 7/27/14
  */
 public abstract class AbstractGraph<V extends Vertex, E extends Edge<V>> implements Graph<V,E> {
-    protected final Set<V> vertices;
+    protected final Map<V, V> vertices;
     protected final Set<E> edges;
 
     public AbstractGraph() {
-        vertices = new HashSet<V>();
+        vertices = new HashMap<V,V>();
         edges = new HashSet<E>();
     }
 
     public Collection<V> getVertices() {
-        return vertices;
+        return vertices.values();
     }
 
     public Collection<E> getEdges() { return edges; }
@@ -60,11 +62,29 @@ public abstract class AbstractGraph<V extends Vertex, E extends Edge<V>> impleme
     @Override
     public void put(E e) {
         Preconditions.checkNotNull(e);
-        vertices.add(e.getV1());
-        vertices.add(e.getV2());
+        V startVertex = e.getV1();
+        putVertex(startVertex, e);
+        putVertex(e.getV2());
+
+        e.setV1(vertices.get(e.getV1()));
+        e.setV2(vertices.get(e.getV2()));
         edges.add(e);
     }
 
+    private V putVertex(V vertex) {
+        V temp = vertices.get(vertex);
+        if(temp == null) {
+            temp = vertex;
+            vertices.put(vertex, vertex);
+        }
+        return temp;
+    }
+
+    private V putVertex(V vertex, E edge) {
+        V temp = putVertex(vertex);
+        temp.addEdge(edge);
+        return temp;
+    }
     /**
      * Get specified <code>Edge</code>.
      * @param e edge to find

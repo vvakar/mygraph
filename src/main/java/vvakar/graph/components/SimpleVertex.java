@@ -1,22 +1,36 @@
 package vvakar.graph.components;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Sets;
+import vvakar.graph.interfaces.Edge;
 import vvakar.graph.interfaces.Vertex;
+
+import java.util.Set;
 
 /**
 * @author vvakar
 *         Date: 7/27/14
 */
-public class SimpleVertex implements Vertex{
+public class SimpleVertex<E extends Edge> implements Vertex<E>{
     private String name;
+    protected final Set<E> edges;
 
     public SimpleVertex(String name) {
         Preconditions.checkNotNull(name);
         this.name = name;
+        edges = Sets.newHashSet();
     }
 
     public String getName() {
         return name;
+    }
+
+    public void addEdge(E e) {
+        edges.add(e);
+    }
+
+    public Set<E> getEdges() {
+        return edges;
     }
 
     @Override

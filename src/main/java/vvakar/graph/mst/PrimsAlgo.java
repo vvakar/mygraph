@@ -1,5 +1,6 @@
 package vvakar.graph.mst;
 
+import com.apple.concurrent.Dispatch;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -26,35 +27,32 @@ public class PrimsAlgo {
         Set<V> seen = Sets.newHashSet();
 
         if(graph.getVertices().iterator().hasNext()) {
+            PriorityQueue<E> heap = new PriorityQueue<E>(10, new Comparator<E>() {
+                @Override
+                public int compare(E o1, E o2) {
+                    return o1.getWeight() - o2.getWeight();
+                }
+            });
 
-            // prime
+            // prime the computation
             int totalVertices = graph.getVertices().size();
             V current = graph.getVertices().iterator().next();
             seen.add(current);
+            heap.addAll(current.getEdges());
 
-            while(seen.size() < totalVertices) {
-                PriorityQueue<E> heap = new PriorityQueue<E>(10, new Comparator<E>() {
-                    @Override
-                    public int compare(E o1, E o2) {
-                        return o1.getWeight() - o2.getWeight();
-                    }
-                });
-
-                for (E edge : graph.getEdges()) {
-                    if (seen.contains(edge.getV1()) && !seen.contains(edge.getV2())) {
-                        // this is a bridge edge - add to heap
-                        heap.add(edge);
-                    }
-                }
-
+            do {
                 E smallestEdge = heap.poll();
-                if(smallestEdge != null) {
-                    retval.add(smallestEdge);
-                    seen.add(smallestEdge.getV2());
-                } else if(seen.size() < totalVertices) {
+                if (smallestEdge != null) {
+                    V next = smallestEdge.getV2();
+                    if (!seen.contains(next)) {
+                        retval.add(smallestEdge);
+                        seen.add(next);
+                        heap.addAll(next.getEdges());
+                    }
+                } else if (seen.size() < totalVertices) {
                     throw new RuntimeException("Apparently graph not connected");
                 }
-            }
+            } while(seen.size() < totalVertices);
         }
 
         return retval;
@@ -63,7 +61,9 @@ public class PrimsAlgo {
     public static <V extends Vertex, E extends Edge<V>> int getTotalSize( List<E> list)  {
         int total = 0;
         for(E e : list) {
-            total += e.getWeight();
+            if(!e.getV1().equals(e.getV2())) { // don't count self-edges
+                total += e.getWeight();
+            }
         }
 
         return total;

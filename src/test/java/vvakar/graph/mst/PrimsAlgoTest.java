@@ -28,13 +28,25 @@ import static vvakar.graph.components.GraphFactory.vertex;
  */
 public class PrimsAlgoTest {
     Graph nonEmptyGraph;
-    Vertex v1 = vertex("v1"), v2 = vertex("v2"), v3 = vertex("v3"), v4 = vertex("v4"), v5 = vertex("v5");
-    DirectedEdge e12 = directedEdge(v1, v2, 3), e13 = directedEdge(v1, v3, 10), e25 = directedEdge(v2, v5, 123456),
-            e34 = directedEdge(v3, v4, 9), e45 = directedEdge(v4, v5, 1);
+    Vertex v1, v2, v3, v4, v5;
+    DirectedEdge e12, e13, e25,e34, e45;
 
 
     @Before
     public void before() {
+        v1 = vertex("v1");
+        v2 = vertex("v2");
+        v3 = vertex("v3");
+        v4 = vertex("v4");
+        v5 = vertex("v5");
+
+        e12 = directedEdge(v1, v2, 3);
+        e13 = directedEdge(v1, v3, 10);
+        e25 = directedEdge(v2, v5, 123456);
+        e34 = directedEdge(v3, v4, 9);
+        e45 = directedEdge(v4, v5, 1);
+
+
         nonEmptyGraph = new SimpleDirectedGraph<Vertex>();
         /*
              v1 --3-> v2 --123456-> v5
@@ -52,7 +64,7 @@ public class PrimsAlgoTest {
     @Test
     public void testOne() {
         Graph graph = new SimpleDirectedGraph<Vertex>();
-        graph.put(directedEdge(v3, v3, 9));
+        graph.put(directedEdge(vertex("V"),vertex("V"), 9));
         List<Edge<Vertex>> list = PrimsAlgo.compute(graph);
         assertEquals(0, PrimsAlgo.getTotalSize(list));
         assertTrue(list.isEmpty());
@@ -76,30 +88,39 @@ public class PrimsAlgoTest {
 
     @Test
     public void testHw1() throws Exception {
-        List<DirectedEdge<Vertex>> list = PrimsAlgo.compute(Util.getGraph("graph1.txt"));
+        Graph<Vertex, DirectedEdge<Vertex>> graph = Util.getGraph("graph1.txt");
+        List<DirectedEdge<Vertex>> list = PrimsAlgo.compute(graph);
+
+        assertEquals(graph.getVertices().size() - 1, list.size());
         int totalSize = PrimsAlgo.getTotalSize(list);
         System.out.println("Total size: " + totalSize);
     }
 
     @Test
     public void testHw2() throws Exception {
-        List<DirectedEdge<Vertex>> list = PrimsAlgo.compute(Util.getGraph("graph2.txt"));
+        Graph<Vertex, DirectedEdge<Vertex>> graph = Util.getGraph("graph2.txt");
+        List<DirectedEdge<Vertex>> list = PrimsAlgo.compute(graph);
+        assertEquals(graph.getVertices().size() - 1, list.size());
         int totalSize = PrimsAlgo.getTotalSize(list);
         System.out.println("Total size: " + totalSize);
     }
 
     @Test
     public void testHw3() throws Exception {
-        List<DirectedEdge<Vertex>> list = PrimsAlgo.compute(Util.getGraph("graph3.txt"));
+        Graph<Vertex, DirectedEdge<Vertex>> graph = Util.getGraph("graph3.txt");
+        List<DirectedEdge<Vertex>> list = PrimsAlgo.compute(graph);
+        assertEquals(graph.getVertices().size() - 1, list.size());
         int totalSize = PrimsAlgo.getTotalSize(list);
         System.out.println("Total size: " + totalSize);
     }
 
-//    @Test
-//    public void testHwMonster() throws Exception {
-//        List<DirectedEdge<Vertex>> list = PrimsAlgo.compute(Util.getGraph("graphmonster.txt"));
-//        int totalSize = PrimsAlgo.getTotalSize(list);
-//        System.out.println("Total size: " + totalSize);
-//    }
+    @Test
+    public void testHwMonster() throws Exception {
+        Graph<Vertex, DirectedEdge<Vertex>> graph = Util.getGraph("graphmonster.txt");
+        List<DirectedEdge<Vertex>> list = PrimsAlgo.compute(graph);
+        assertEquals(graph.getVertices().size() - 1, list.size());
+        int totalSize = PrimsAlgo.getTotalSize(list);
+        System.out.println("Total size: " + totalSize);
+    }
 
 }

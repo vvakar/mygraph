@@ -34,6 +34,14 @@ abstract class AbstractEdge<V extends Vertex> implements Edge<V> {
         return v2;
     }
 
+    public void setV1(V v1) {
+        this.v1 = v1;
+    }
+
+    public void setV2(V v2) {
+        this.v2 = v2;
+    }
+
     public int getWeight() {
         return weight;
     }

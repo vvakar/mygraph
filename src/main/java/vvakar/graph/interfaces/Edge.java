@@ -9,8 +9,10 @@ import com.google.common.base.Optional;
  */
 public interface Edge<V> {
     V getV1();
+    void setV1(V v);
 
     V getV2();
+    void setV2(V v2);
 
     int getWeight();
 
