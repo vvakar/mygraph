@@ -8,6 +8,9 @@ import vvakar.graph.components.SimpleDirectedGraph;
 import vvakar.graph.interfaces.Edge;
 import vvakar.graph.interfaces.Graph;
 import vvakar.graph.interfaces.Vertex;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
@@ -28,11 +31,11 @@ public class FloydWarshallTest {
 
     @Before
     public void before() {
-        v1 = vertex("0");
-        v2 = vertex("1");
-        v3 = vertex("2");
-        v4 = vertex("3");
-        v5 = vertex("4");
+        v1 = vertex("1");
+        v2 = vertex("2");
+        v3 = vertex("3");
+        v4 = vertex("4");
+        v5 = vertex("5");
 
         e12 = directedEdge(v1, v2, 3);
         e13 = directedEdge(v1, v3, 10);
@@ -58,7 +61,7 @@ public class FloydWarshallTest {
     @Test
     public void testOne() {
         Graph graph = new SimpleDirectedGraph<Vertex>();
-        graph.put(directedEdge(vertex("0"),vertex("0"), 9));
+        graph.put(directedEdge(vertex("V"),vertex("V"), 9));
         long[][] arr = FloydWarshall.compute(graph);
 //        assertEquals(0, FloydWarshall.getTotalSize(list));
 //        assertTrue(list.isEmpty());
@@ -81,38 +84,51 @@ public class FloydWarshallTest {
 
     }
 
-    @Test
+    @Test(expected = RuntimeException.class)
     public void testHw1() throws Exception {
         Graph<Vertex, DirectedEdge<Vertex>> graph = Util.getGraph("graph1.txt");
         long[][] arr = FloydWarshall.compute(graph);
-
-//        assertEquals(graph.getVertices().size() - 1, list.size());
-//        int totalSize = FloydWarshall.getTotalSize(list);
-//        System.out.println("Total size: " + totalSize);
+        assertFalse(true);
     }
 
-    @Test
+    @Test(expected = RuntimeException.class)
     public void testHw2() throws Exception {
         Graph<Vertex, DirectedEdge<Vertex>> graph = Util.getGraph("graph2.txt");
         long[][] arr = FloydWarshall.compute(graph);
-//        assertEquals(graph.getVertices().size() - 1, list.size());
-//        int totalSize = FloydWarshall.getTotalSize(list);
-//        System.out.println("Total size: " + totalSize);
+        assertFalse(true);
     }
 
     @Test
     public void testHw3() throws Exception {
         Graph<Vertex, DirectedEdge<Vertex>> graph = Util.getGraph("graph3.txt");
         long[][] arr = FloydWarshall.compute(graph);
-//        assertEquals(graph.getVertices().size() - 1, list.size());
-//        int totalSize = FloydWarshall.getTotalSize(list);
-//        System.out.println("Total size: " + totalSize);
+
+        long min = Long.MAX_VALUE;
+        int x = -1, y = -1;
+        for(int i = 0; i < arr.length; ++i) {
+            for (int j = 0; j < arr[0].length; ++j) {
+                if(i == j) continue;
+
+                long candidate = arr[i][j];
+                if(candidate < min) {
+                    min = candidate;
+                    x = i;
+                    y = j;
+                }
+            }
+        }
+
+        Vertex v1 = (Vertex)FloydWarshall.idsToVertices.get(x);
+        Vertex v2 = (Vertex)FloydWarshall.idsToVertices.get(y);
+
+        assertFalse(true);
     }
 
     @Test
     public void testHwMonster() throws Exception {
         Graph<Vertex, DirectedEdge<Vertex>> graph = Util.getGraph("graphmonster.txt");
         long[][] arr = FloydWarshall.compute(graph);
+        assertFalse(true);
 //        assertEquals(graph.getVertices().size() - 1, list.size());
 //        int totalSize = FloydWarshall.getTotalSize(list);
 //        System.out.println("Total size: " + totalSize);

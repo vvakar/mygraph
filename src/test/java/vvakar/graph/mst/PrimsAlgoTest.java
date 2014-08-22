@@ -87,6 +87,16 @@ public class PrimsAlgoTest {
     }
 
     @Test
+    public void testMstHw() throws Exception {
+        Graph<Vertex, DirectedEdge<Vertex>> graph = Util.getGraph("msthw.txt");
+        List<DirectedEdge<Vertex>> list = PrimsAlgo.compute(graph);
+        assertEquals(graph.getVertices().size() - 1, list.size());
+        int totalSize = PrimsAlgo.getTotalSize(list);
+        System.out.println("Total size: " + totalSize);
+
+    }
+
+    @Test
     public void testHw1() throws Exception {
         Graph<Vertex, DirectedEdge<Vertex>> graph = Util.getGraph("graph1.txt");
         List<DirectedEdge<Vertex>> list = PrimsAlgo.compute(graph);

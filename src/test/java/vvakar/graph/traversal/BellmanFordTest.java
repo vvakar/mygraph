@@ -18,6 +18,7 @@ import java.io.InputStreamReader;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static vvakar.graph.components.GraphFactory.directedEdge;
 import static vvakar.graph.components.GraphFactory.vertex;
@@ -78,17 +79,21 @@ public class BellmanFordTest {
 
     @Test(expected = RuntimeException.class)
     public void testHw1() throws Exception {
-        BellmanFord.compute(Util.getGraph("graph1.txt"), vertex("1"), vertex("2"));
+        List<BellmanFord.BellmanFordDistanceBean<Vertex>> list = BellmanFord.compute(Util.getGraph("graph1.txt"), vertex("309"), vertex("309"));
+
+        assertFalse(true);
     }
 
     @Test(expected = RuntimeException.class)
     public void testHw2() throws Exception {
-        BellmanFord.compute(Util.getGraph("graph2.txt"), vertex("1"), vertex("2"));
+        List<BellmanFord.BellmanFordDistanceBean<Vertex>> list =BellmanFord.compute(Util.getGraph("graph2.txt"), vertex("1"), vertex("2"));
+        assertFalse(true);
     }
 
     @Test
     public void testHw3() throws Exception {
-        BellmanFord.compute(Util.getGraph("graph3.txt"), vertex("1"), vertex("2"));
+        List<BellmanFord.BellmanFordDistanceBean<Vertex>> list = BellmanFord.compute(Util.getGraph("graph3.txt"), vertex("399"), vertex("904"));
+        assertFalse(true);
     }
 
 }
