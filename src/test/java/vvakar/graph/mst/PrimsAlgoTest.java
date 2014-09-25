@@ -1,21 +1,15 @@
 package vvakar.graph.mst;
 
-import com.google.common.collect.Sets;
-import com.google.common.io.LineReader;
 import org.junit.Before;
 import org.junit.Test;
 import vvakar.graph.Util;
 import vvakar.graph.components.DirectedEdge;
-import vvakar.graph.components.GraphFactory;
 import vvakar.graph.components.SimpleDirectedGraph;
 import vvakar.graph.interfaces.Edge;
 import vvakar.graph.interfaces.Graph;
 import vvakar.graph.interfaces.Vertex;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.List;
-import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -88,7 +82,7 @@ public class PrimsAlgoTest {
 
     @Test
     public void testMstHw() throws Exception {
-        Graph<Vertex, DirectedEdge<Vertex>> graph = Util.getGraph("msthw.txt");
+        Graph<Vertex, DirectedEdge<Vertex>> graph = Util.getUndirectedGraph("msthw.txt");
         List<DirectedEdge<Vertex>> list = PrimsAlgo.compute(graph);
         assertEquals(graph.getVertices().size() - 1, list.size());
         int totalSize = PrimsAlgo.getTotalSize(list);
@@ -98,7 +92,7 @@ public class PrimsAlgoTest {
 
     @Test
     public void testHw1() throws Exception {
-        Graph<Vertex, DirectedEdge<Vertex>> graph = Util.getGraph("graph1.txt");
+        Graph<Vertex, DirectedEdge<Vertex>> graph = Util.getDirectedGraph("graph1.txt");
         List<DirectedEdge<Vertex>> list = PrimsAlgo.compute(graph);
 
         assertEquals(graph.getVertices().size() - 1, list.size());
@@ -108,7 +102,7 @@ public class PrimsAlgoTest {
 
     @Test
     public void testHw2() throws Exception {
-        Graph<Vertex, DirectedEdge<Vertex>> graph = Util.getGraph("graph2.txt");
+        Graph<Vertex, DirectedEdge<Vertex>> graph = Util.getDirectedGraph("graph2.txt");
         List<DirectedEdge<Vertex>> list = PrimsAlgo.compute(graph);
         assertEquals(graph.getVertices().size() - 1, list.size());
         int totalSize = PrimsAlgo.getTotalSize(list);
@@ -117,7 +111,7 @@ public class PrimsAlgoTest {
 
     @Test
     public void testHw3() throws Exception {
-        Graph<Vertex, DirectedEdge<Vertex>> graph = Util.getGraph("graph3.txt");
+        Graph<Vertex, DirectedEdge<Vertex>> graph = Util.getDirectedGraph("graph3.txt");
         List<DirectedEdge<Vertex>> list = PrimsAlgo.compute(graph);
         assertEquals(graph.getVertices().size() - 1, list.size());
         int totalSize = PrimsAlgo.getTotalSize(list);
@@ -126,7 +120,7 @@ public class PrimsAlgoTest {
 
     @Test
     public void testHwMonster() throws Exception {
-        Graph<Vertex, DirectedEdge<Vertex>> graph = Util.getGraph("graphmonster.txt");
+        Graph<Vertex, DirectedEdge<Vertex>> graph = Util.getDirectedGraph("graphmonster.txt");
         List<DirectedEdge<Vertex>> list = PrimsAlgo.compute(graph);
         assertEquals(graph.getVertices().size() - 1, list.size());
         int totalSize = PrimsAlgo.getTotalSize(list);

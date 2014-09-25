@@ -5,14 +5,11 @@ import org.junit.Test;
 import vvakar.graph.Util;
 import vvakar.graph.components.DirectedEdge;
 import vvakar.graph.components.SimpleDirectedGraph;
-import vvakar.graph.interfaces.Edge;
 import vvakar.graph.interfaces.Graph;
 import vvakar.graph.interfaces.Vertex;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -86,21 +83,21 @@ public class FloydWarshallTest {
 
     @Test(expected = RuntimeException.class)
     public void testHw1() throws Exception {
-        Graph<Vertex, DirectedEdge<Vertex>> graph = Util.getGraph("graph1.txt");
+        Graph<Vertex, DirectedEdge<Vertex>> graph = Util.getDirectedGraph("graph1.txt");
         long[][] arr = FloydWarshall.compute(graph);
         assertFalse(true);
     }
 
     @Test(expected = RuntimeException.class)
     public void testHw2() throws Exception {
-        Graph<Vertex, DirectedEdge<Vertex>> graph = Util.getGraph("graph2.txt");
+        Graph<Vertex, DirectedEdge<Vertex>> graph = Util.getDirectedGraph("graph2.txt");
         long[][] arr = FloydWarshall.compute(graph);
         assertFalse(true);
     }
 
     @Test
     public void testHw3() throws Exception {
-        Graph<Vertex, DirectedEdge<Vertex>> graph = Util.getGraph("graph3.txt");
+        Graph<Vertex, DirectedEdge<Vertex>> graph = Util.getDirectedGraph("graph3.txt");
         long[][] arr = FloydWarshall.compute(graph);
 
         long min = Long.MAX_VALUE;
@@ -126,7 +123,7 @@ public class FloydWarshallTest {
 
     @Test
     public void testHwMonster() throws Exception {
-        Graph<Vertex, DirectedEdge<Vertex>> graph = Util.getGraph("graphmonster.txt");
+        Graph<Vertex, DirectedEdge<Vertex>> graph = Util.getDirectedGraph("graphmonster.txt");
         long[][] arr = FloydWarshall.compute(graph);
         assertFalse(true);
 //        assertEquals(graph.getVertices().size() - 1, list.size());

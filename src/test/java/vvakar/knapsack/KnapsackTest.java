@@ -1,7 +1,9 @@
 package vvakar.knapsack;
 
 import com.google.common.collect.Lists;
+import com.sun.tools.javac.util.Pair;
 import org.junit.Test;
+import vvakar.graph.Util;
 
 import java.util.List;
 
@@ -50,6 +52,21 @@ public class KnapsackTest {
 
         System.out.println("Was off " + offByCount + " times");
 
+    }
+
+    @Test
+    public void testHw1() throws Exception {
+        Pair<Integer, List<Knapsack.Item>> pair = Util.getKnapsackItems("knapsack1.txt");
+        List<Integer> solutionDP = new Knapsack().computeDP(pair.fst, pair.snd.toArray(new Knapsack.Item[0]));
+        assertNotNull(solutionDP);
+    }
+
+    @Test
+    public void testHw2() throws Exception {
+        Pair<Integer, List<Knapsack.Item>> pair = Util.getKnapsackItems("knapsack2.txt");
+//        List<Integer> solutionDP = new Knapsack().computeDP(pair.fst, pair.snd.toArray(new Knapsack.Item[0]));
+        List<Integer> solutionGreedy = new Knapsack().computeHeuristic(pair.fst, true, pair.snd.toArray(new Knapsack.Item[0]));
+        assertNotNull(solutionGreedy);
     }
 
     private Knapsack.Item[] generateItems(int howmany) {
