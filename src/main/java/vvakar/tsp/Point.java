@@ -42,4 +42,19 @@ public class Point {
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         return result;
     }
+
+    @Override
+    public String toString() {
+        return  label + "[" + x + ", " + y + ']';
+    }
+
+    /**
+     * Euclidean distance between two 2-D points
+     */
+    public static double distance(Point p1, Point p2) {
+        return Math.sqrt(
+                Math.pow(p1.x - p2.x, 2) +
+                Math.pow(p1.y - p2.y, 2)
+        );
+    }
 }
