@@ -39,6 +39,7 @@ public class TSPTest {
         points.add(new Point(3,4));
         List<Point> ret = TSP.computeShortestPath(points);
         assertEquals(2, ret.size());
+
     }
 
     @Test
