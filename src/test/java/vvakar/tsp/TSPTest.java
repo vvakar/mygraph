@@ -3,12 +3,7 @@ package vvakar.tsp;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import org.junit.Test;
-import vvakar.graph.Util;
-import vvakar.graph.components.DirectedEdge;
-import vvakar.graph.components.SimpleDirectedGraph;
-import vvakar.graph.interfaces.Edge;
-import vvakar.graph.interfaces.Graph;
-import vvakar.graph.interfaces.Vertex;
+import vvakar.util.Util;
 
 import java.util.List;
 
@@ -16,7 +11,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static vvakar.graph.components.GraphFactory.directedEdge;
-import static vvakar.graph.components.GraphFactory.vertex;
 
 
 /**
@@ -25,7 +19,7 @@ import static vvakar.graph.components.GraphFactory.vertex;
  */
 public class TSPTest {
     @Test
-    public void testTSPOneNode() {
+    public void testTSPOneVertex() {
         List<Point> points = Lists.newArrayList();
         points.add(new Point(1,2));
         List<Point> ret = TSP.computeShortestPath(points);

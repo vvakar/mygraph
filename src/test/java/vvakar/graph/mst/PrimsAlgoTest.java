@@ -2,7 +2,7 @@ package vvakar.graph.mst;
 
 import org.junit.Before;
 import org.junit.Test;
-import vvakar.graph.Util;
+import vvakar.util.Util;
 import vvakar.graph.components.DirectedEdge;
 import vvakar.graph.components.SimpleDirectedGraph;
 import vvakar.graph.interfaces.Edge;

@@ -3,7 +3,7 @@ package vvakar.knapsack;
 import com.google.common.collect.Lists;
 import com.sun.tools.javac.util.Pair;
 import org.junit.Test;
-import vvakar.graph.Util;
+import vvakar.util.Util;
 
 import java.util.List;
 

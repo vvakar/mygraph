@@ -2,11 +2,12 @@ package vvakar.graph.traversal;
 
 import org.junit.Before;
 import org.junit.Test;
-import vvakar.graph.Util;
 import vvakar.graph.components.DirectedEdge;
 import vvakar.graph.components.SimpleDirectedGraph;
 import vvakar.graph.interfaces.Graph;
 import vvakar.graph.interfaces.Vertex;
+import vvakar.util.Util;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;

@@ -1,5 +1,7 @@
 package vvakar.tsp;
 
+import com.google.common.base.Strings;
+
 /**
  * Point in 2-D space with optional label.
  * @author vvakar
@@ -45,7 +47,9 @@ public class Point {
 
     @Override
     public String toString() {
-        return  label + "[" + x + ", " + y + ']';
+        return  Strings.isNullOrEmpty(label) ?
+                "[" + x + ", " + y + ']' :
+                label;
     }
 
     /**
