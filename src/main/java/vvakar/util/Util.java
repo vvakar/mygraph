@@ -47,7 +47,7 @@ public class Util {
         Preconditions.checkArgument(list.size() < 31);
         Set<T> set = Sets.newHashSet();
         for(int i = 0; list.size() > i; ++i) {
-            if((b & 1 << i) > 0) {
+            if((b & (1 << i)) > 0) {
                 set.add(list.get(i));
             }
         }
