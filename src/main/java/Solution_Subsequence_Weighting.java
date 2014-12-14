@@ -108,47 +108,49 @@ public class Solution_Subsequence_Weighting {
      */
     static final class MaxSegmentTree {
         private static final class Node {
-            final Node left, right;
+            Node left, right, parent;
             long value;
             final int from, to;
-            Node(Node left, Node right, int from, int to, long v) {
+            Node(Node left, Node right, Node parent, int from, int to, long v) {
                 this.from = from;
                 this.to = to;
                 this.left = left;
                 this.right = right;
+                this.parent = parent;
                 this.value = v;
             }
         }
-        private static final Node NULL_NODE = new Node(null, null, Integer.MAX_VALUE, Integer.MIN_VALUE, 0);
+        private static final Node NULL_NODE = new Node(null, null, null, Integer.MAX_VALUE, Integer.MIN_VALUE, 0);
         private final Node root;
-        final TreeMap<Integer,Long> map; // simulate sparse array
+        final TreeMap<Integer,Node> leafs; // simulate sparse array
 
         /**
          * Since the tree supports only updates, it must be initialized with the list of all non-null index positions.
          * @param nonEmptyPositions
          */
         public MaxSegmentTree(int nonEmptyPositions[]) {
-            this.map = new TreeMap<Integer, Long>();
+            this.leafs = new TreeMap<Integer, Node>();
             for(int a : nonEmptyPositions) {
-                map.put(a, 0L);
+                leafs.put(a, NULL_NODE);
             }
 
             // construction requires a sorted array of all non-empty index positions
-            int[] sortedNonemptyPositions = new int[nonEmptyPositions.length];
+            // there can be duplicate positions in the input!!
+            int[] sortedNonemptyPositions = new int[leafs.size()];
             int count = 0;
-            for(int v : map.keySet()) {
+            for(int v : leafs.keySet()) {
                 sortedNonemptyPositions[count++] = v;
             }
-            root = construct(map, sortedNonemptyPositions, 0, nonEmptyPositions.length - 1);
+            root = construct(leafs, sortedNonemptyPositions, 0, sortedNonemptyPositions.length - 1, null);
         }
 
-        private Node construct(TreeMap<Integer,Long> map, int[] As, int from, int to) {
+        private Node construct(TreeMap<Integer,Node> leafs, int[] nonEmptyPositions, int from, int to, Node parent) {
 
-            if(As.length == 0 || from > to)
+            if(nonEmptyPositions.length == 0 || from > to)
                 return NULL_NODE;
 
-            int fromA = As[from];
-            int toA = As[to];
+            int fromA = nonEmptyPositions[from];
+            int toA = nonEmptyPositions[to];
             if(fromA > toA) {
                 // ugh - swap
                 int temp = toA;
@@ -157,13 +159,20 @@ public class Solution_Subsequence_Weighting {
             }
 
             if(from == to) {
-                return new Node(null, null, fromA, toA, map.get(As[from]));
+                // leaf node - update map
+                Node node = new Node(null, null, parent, fromA, toA, leafs.get(fromA).value);
+                leafs.put(fromA, node);
+                return node;
             }
 
             int rootIndex = (to + from)/2;
-            Node leftNode = construct(map, As, from, rootIndex);
-            Node rightNode = construct(map, As, rootIndex + 1, to);
-            return new Node(leftNode, rightNode, fromA, toA, Math.max(leftNode.value, rightNode.value));
+            Node current = new Node(null, null, parent, fromA, toA, 0);
+            Node leftNode = construct(leafs, nonEmptyPositions, from, rootIndex, current);
+            Node rightNode = construct(leafs, nonEmptyPositions, rootIndex + 1, to, current);
+            current.left = leftNode;
+            current.right = rightNode;
+            current.value = Math.max(leftNode.value, rightNode.value);
+            return current;
         }
 
         /**
@@ -175,28 +184,24 @@ public class Solution_Subsequence_Weighting {
          * @return value at position right before index, if available otherwise zero
          */
         public long getValueRightBeforeIndex(int index) {
-            Integer keyRightBeforeThisOne = map.floorKey(index - 1);
+            Integer keyRightBeforeThisOne = leafs.floorKey(index - 1);
             long val = 0;
             if(keyRightBeforeThisOne != null) {
-                val = query(map.firstKey(), keyRightBeforeThisOne);
+                val = query(leafs.firstKey(), keyRightBeforeThisOne);
             }
             return val;
 
         }
         public void update(int key, long val) {
-            map.put(key, val);
-            updateMax(root, key, val);
+            Node node = leafs.get(key);
+            node.value = val;
+            propagateUp(node.parent);
         }
 
-        private void updateMax(Node root, int key, long maxCandidate) {
-            if(root == null) return;
-            if(key > root.to || key < root.from) return; // out of range
-
-            if(root.from <= key && root.to >= key && root.value < maxCandidate) {
-                root.value = maxCandidate; // in range
-            }
-            updateMax(root.left, key, maxCandidate);
-            updateMax(root.right, key, maxCandidate);
+        private void propagateUp(Node node) {
+            if(node == null) return;
+            node.value = Math.max(node.left.value, node.right.value);
+            propagateUp(node.parent);
         }
 
         public long query(int from, int to) {
