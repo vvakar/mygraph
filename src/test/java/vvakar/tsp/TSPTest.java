@@ -30,8 +30,8 @@ public class TSPTest {
     @Test
     public void testTSPTwoVertices() {
         List<Point> points = Lists.newArrayList();
-        points.add(new Point(1,2));
-        points.add(new Point(3,4));
+        points.add(new Point(1,2, "1"));
+        points.add(new Point(3,4, "2"));
         List<Point> ret = TSP.computeShortestPath(points);
         assertEquals(2, ret.size());
 
@@ -41,9 +41,9 @@ public class TSPTest {
     @Test
     public void testTSPThreeVertices() {
         List<Point> points = Lists.newArrayList();
-        Point p1 = new Point(1,0);
-        Point p2 = new Point(50,0);
-        Point p3 = new Point(2,0);
+        Point p1 = new Point(1,0,"1");
+        Point p2 = new Point(50,0,"2");
+        Point p3 = new Point(2,0,"3");
         points.add(p1);
         points.add(p2);
         points.add(p3);
@@ -53,6 +53,11 @@ public class TSPTest {
 
     }
 
+    /**
+     * shortest path = 26442.73030895475
+     * path (0-based) = [0, 1, 5, 9, 10, 11, 14, 18, 17, 21, 22, 20, 16, 19, 24, 23, 15, 13, 12, 8, 6, 2, 3, 7, 4]
+     * @throws Exception
+     */
     @Test
     public void testTSP() throws Exception {
         List<Point> points = Util.getTspPoints("tsp.txt");

@@ -7,6 +7,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import vvakar.util.Util;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,73 @@ import java.util.Set;
  */
 public class TSP {
     public static List<Point> computeShortestPath(List<Point> points) {
+        if(false) {
+            return mine(points);
+        } else  {
+            return theirs(points);
+        }
+
+    }
+
+    private static List<Point> theirs(List<Point> points) {
+        int size = points.size();
+        double[][] dist = new double[size][size];
+
+        // calculate distance matrics from/to every point
+        for(int i = 0; i < size; ++i) {
+            for(int j = 0; j < size; ++j) {
+                Point from = points.get(i);
+                Point to = points.get(j);
+                dist[i][j] = Point.distance(from, to);
+            }
+        }
+
+        double shortest = getShortestHamiltonianCycle(dist);
+        return points;
+    }
+
+    public static double getShortestHamiltonianCycle(double[][] dist) {
+        int n = dist.length;
+        double[][] dp = new double[1 << n][n];
+        for (double[] d : dp)
+            Arrays.fill(d, Double.MAX_VALUE / 2);
+        dp[1][0] = 0;
+        for (int mask = 1; mask < 1 << n; mask += 2) {
+            for (int i = 1; i < n; i++) {
+                if ((mask & 1 << i) != 0) {
+                    for (int j = 0; j < n; j++) {
+                        if ((mask & 1 << j) != 0) {
+                            dp[mask][i] = Math.min(dp[mask][i], dp[mask ^ (1 << i)][j] + dist[j][i]);
+                        }
+                    }
+                }
+            }
+        }
+        double res = Double.MAX_VALUE;
+        for (int i = 1; i < n; i++) {
+            res = Math.min(res, dp[(1 << n) - 1][i] + dist[i][0]);
+        }
+
+        // reconstruct path
+        int cur = (1 << n) - 1;
+        int[] order = new int[n];
+        int last = 0;
+        for (int i = n - 1; i >= 1; i--) {
+            int bj = -1;
+            for (int j = 1; j < n; j++) {
+                if ((cur & 1 << j) != 0 && (bj == -1 || dp[cur][bj] + dist[bj][last] > dp[cur][j] + dist[j][last])) {
+                    bj = j;
+                }
+            }
+            order[i] = bj;
+            cur ^= 1 << bj;
+            last = bj;
+        }
+        System.out.println(Arrays.toString(order));
+        return res;
+    }
+
+    private static List<Point> mine(List<Point>points) {
         System.out.println("Starting TSP at " + new Date());
 
         final Point ONE = points.get(0);
@@ -32,9 +100,16 @@ public class TSP {
 
         for(int m = 3; m < points.size(); ++m) {
             Map<LastStop, Double> costMap = Maps.newHashMap();
-            List<Set<Point>> subsets = allKSubsetsThatInclude(ONE, points, m);
+            List<Set<Point>> subsets = allKSubsetsThatInclude(ONE, points, m); // convert to generator to ease memory pressure
             System.out.println("SUBSET SIZE = " + subsets.size() + " for k = " + m);
+            int subsetCount = 0;
             for(Set<Point> subset : subsets) {
+
+                ++subsetCount;
+                if(subsetCount % 10000 == 0) {
+                    System.out.println("Processing subset " + subsetCount + " of " + subsets.size() + " for k = " + m);
+                }
+
                 for(Point J : subset) {
                     if(!J.equals(ONE)) {
                         Set<Point> S_Minus_J = setWithoutPoint(subset, J);
@@ -53,7 +128,6 @@ public class TSP {
             previousCostMap = costMap;
 
         }
-
 
         // TODO: find distance back to ONE
         List<Point> ret = Lists.newArrayList();
