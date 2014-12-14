@@ -192,6 +192,12 @@ public class Solution_Subsequence_Weighting {
             return val;
 
         }
+
+        /**
+         * Update one value, propagating the change up the tree
+         * @param key key to update
+         * @param val new value
+         */
         public void update(int key, long val) {
             Node node = leafs.get(key);
             node.value = val;

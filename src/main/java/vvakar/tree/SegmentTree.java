@@ -23,7 +23,7 @@ public class SegmentTree {
 
     private static final class Node {
         Node left, right, parent;
-        long value;
+        long value = ZERO_VALUE;
         final int from, to;
 
         Node(Node left, Node right, Node parent, int from, int to, long v) {
@@ -36,9 +36,10 @@ public class SegmentTree {
         }
     }
 
-    private static final Node NULL_NODE = new Node(null, null, null, Integer.MAX_VALUE, Integer.MIN_VALUE, 0);
+    private static final byte ZERO_VALUE = 0;
+    private static final Node NULL_NODE = new Node(null, null, null, Integer.MAX_VALUE, Integer.MIN_VALUE, ZERO_VALUE);
     private final Node root;
-    final TreeMap<Integer, Node> leafs; // simulate sparse array
+    final TreeMap<Integer, Node> leafs; // better support sparse arrays by allocating only the strictly necessary
 
     /**
      * Since the tree supports only updates, it must be initialized with the list of all non-null index positions.
@@ -83,7 +84,7 @@ public class SegmentTree {
         }
 
         int rootIndex = (to + from) / 2;
-        Node current = new Node(null, null, parent, fromA, toA, 0);
+        Node current = new Node(null, null, parent, fromA, toA, ZERO_VALUE);
         Node leftNode = construct(leafs, nonEmptyPositions, from, rootIndex, current);
         Node rightNode = construct(leafs, nonEmptyPositions, rootIndex + 1, to, current);
         current.left = leftNode;
@@ -103,7 +104,7 @@ public class SegmentTree {
      */
     public long getValueRightBeforeIndex(int index) {
         Integer keyRightBeforeThisOne = leafs.floorKey(index - 1);
-        long val = 0;
+        long val = ZERO_VALUE;
         if (keyRightBeforeThisOne != null) {
             val = query(leafs.firstKey(), keyRightBeforeThisOne);
         }
@@ -134,8 +135,8 @@ public class SegmentTree {
     }
 
     private long findMax(int from, int to, Node root) {
-        if (from > to || root == null) return 0;
-        if (from > root.to || to < root.from) return 0; // out of range
+        if (from > to || root == null) return ZERO_VALUE;
+        if (from > root.to || to < root.from) return ZERO_VALUE; // out of range
 
         // in range - query is on or after current from, and on or before current to
         // no use further narrowing down

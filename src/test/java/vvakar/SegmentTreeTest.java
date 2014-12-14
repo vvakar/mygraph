@@ -19,13 +19,17 @@ public class SegmentTreeTest {
         // 0 1 2 3 4  5  6  7  8  9 10
         long[] arr = new long[] {9,3,7,1,8,12,10,20,15,18,5};
         int[] keys = new int[arr.length];
-        TreeMap<Integer, Long> map = new TreeMap<Integer, Long>();
         for(int i = 0; i < arr.length; ++i) {
-            map.put(i, arr[i]);
             keys[i] = i;
         }
 
-        SegmentTree tree = new SegmentTree(map, keys);
+        SegmentTree tree = new SegmentTree(keys);
+
+        for(int i = 0; i < arr.length; ++i) {
+            tree.update(i, arr[i]);
+            keys[i] = i;
+        }
+
         assertEquals(12, tree.query(1,6));
         assertEquals(12, tree.query(0,5));
         assertEquals(12, tree.query(3,5));
