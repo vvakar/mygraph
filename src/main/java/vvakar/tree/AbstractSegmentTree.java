@@ -1,6 +1,5 @@
 package vvakar.tree;
 
-import java.util.Arrays;
 import java.util.TreeMap;
 
 /**
@@ -19,9 +18,9 @@ import java.util.TreeMap;
  *         Date: 12/13/14
  * @see <a href="http://www.geeksforgeeks.org/segment-tree-set-1-sum-of-given-range/">article</a>
  */
-public class SegmentTree {
+public abstract class AbstractSegmentTree {
 
-    private static final class Node {
+    protected static final class Node {
         Node left, right, parent;
         long value = ZERO_VALUE;
         final int from, to;
@@ -36,7 +35,7 @@ public class SegmentTree {
         }
     }
 
-    private static final byte ZERO_VALUE = 0;
+    protected static final byte ZERO_VALUE = 0;
     private static final Node NULL_NODE = new Node(null, null, null, Integer.MAX_VALUE, Integer.MIN_VALUE, ZERO_VALUE);
     private final Node root;
     final TreeMap<Integer, Node> leafs; // better support sparse arrays by allocating only the strictly necessary
@@ -46,7 +45,7 @@ public class SegmentTree {
      *
      * @param nonEmptyPositions
      */
-    public SegmentTree(int nonEmptyPositions[]) {
+    public AbstractSegmentTree(int nonEmptyPositions[]) {
         this.leafs = new TreeMap<Integer, Node>();
         for (int a : nonEmptyPositions) {
             leafs.put(a, NULL_NODE);
@@ -89,7 +88,7 @@ public class SegmentTree {
         Node rightNode = construct(leafs, nonEmptyPositions, rootIndex + 1, to, current);
         current.left = leftNode;
         current.right = rightNode;
-        current.value = Math.max(leftNode.value, rightNode.value);
+        current.value = aggregateQueryResults(leftNode.value, rightNode.value);
         return current;
     }
 
@@ -118,23 +117,13 @@ public class SegmentTree {
      * @param key key to update
      * @param val new value
      */
-    public void update(int key, long val) {
-        Node node = leafs.get(key);
-        node.value = val;
-        propagateUp(node.parent);
-    }
-
-    private void propagateUp(Node node) {
-        if (node == null) return;
-        node.value = Math.max(node.left.value, node.right.value);
-        propagateUp(node.parent);
-    }
+    public abstract void update(int key, long val);
 
     public long query(int from, int to) {
-        return findMax(from, to, root);
+        return query(from, to, root);
     }
 
-    private long findMax(int from, int to, Node root) {
+    private long query(int from, int to, Node root) {
         if (from > to || root == null) return ZERO_VALUE;
         if (from > root.to || to < root.from) return ZERO_VALUE; // out of range
 
@@ -144,9 +133,11 @@ public class SegmentTree {
             return root.value;
         }
 
-        long candidateLeft = findMax(from, to, root.left); // narrow to the left
-        long candidateRight = findMax(from, to, root.right);
-        return Math.max(candidateLeft, candidateRight);
+        long candidateLeft = query(from, to, root.left); // narrow to the left
+        long candidateRight = query(from, to, root.right);
+        return aggregateQueryResults(candidateLeft, candidateRight);
     }
+
+    protected abstract long aggregateQueryResults(long candidateLeft, long candidateRight);
 }
 
