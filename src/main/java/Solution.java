@@ -1,37 +1,52 @@
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-
 /**
  * @author vvakar
- *         Date: 12/16/14
+ *         Date: 12/22/14
  */
 public class Solution {
-    public static void main(String[] args) throws Exception {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    /*
 
-        String QcountStr = br.readLine().trim();
-        int Qcount = Integer.parseInt(QcountStr);
-
-//        for (int i = 0; i < Qcount; ++i) {
-//            String QStr = br.readLine();
-//            System.out.println(doWork(QStr));
-//
-//        }
-
-        int[] ar = strArray2intArray(br.readLine().split("\\s+"));
-        System.out.println(doWork(ar));
-    }
+         1  3  2  7  5  4  9  8
 
 
-    public static int doWork(int[]arr) {
-        return 0;
-    }
+        Min heap:   5  7  8  9
+        Max heap:   4  3  2  1
 
-    private static int[] strArray2intArray(String[] strs) {
-        int[] ret = new int[strs.length];
-        for(int i = 0; i < strs.length; ++i) {
-            ret[i] = Integer.parseInt(strs[i]);
-        }
-        return ret;
-    }
+
+
+
+                              A
+                           /    \                                 a
+                          B      F                         b           c
+                      /    \    /                       d      d     e      f
+                     D      E  G                    g     h   i j
+                      \   /   / \
+                      J  H   I  0
+                                 \
+                                  0
+                                   \
+                                    0
+                                     \
+                                     Z
+
+                  printPaths(current, path)
+                     if(current is null) return;
+                     if(no children) print path + self;
+                     else
+                        printPaths(left, path)
+                        printPaths(right, path)
+
+
+
+         would like: A B D
+
+         1. from root:
+         2. print self
+         3. go left
+         4. loop 2 until null
+         5. for each visited node, go right
+         6.
+
+*/
+
+
 }
