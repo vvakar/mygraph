@@ -17,70 +17,117 @@ public class Solution {
         int Qcount = Integer.parseInt(QcountStr);
 
         for(int i = 0; i < Qcount; ++i) {
-            String ignore = br.readLine();
-            int[] arr = strArray2intArray(br.readLine().split("\\s+"));
-            System.out.println(doWork(arr));
+            String[] line = br.readLine().split("\\s+");
+            System.out.println(doWork(Integer.parseInt(line[0]), line[1], line[2]));
         }
     }
 
-    final static int MOD = (int)Math.pow(10,9)  + 7;
+    /*
 
-    static HashMap<BigInteger, Integer> MEMO;
+    torino
+    012345
+    tungnrin
+    01234567
 
-    static int doWork(int[] arr) {
-        MEMO = new HashMap<BigInteger, Integer>();
-        MEMO.put(BigInteger.ZERO, 0);
-        int sum = 0;
-        /*
-
-        N = str.length
-        D = 3
-        abcdabcabcdabdafvbadab
-
-
-         ND + ND + ND ... = NND
+  5 0 0 0 0 0 0 0 0
+  4 0 0 1 0 1 0 0 1
+  3 0 0 0 0 0 0 1 0
+  2 0 0 0 0 0 1 0 0
+  1 0 0 0 0 0 0 0 0
+  0 1 0 0 0 0 0 0 0
+    0 1 2 3 4 5 6 7
 
 
-         1  2  3
+     */
+    static int doWork(int distance, String left, String right) {
+        MyString[] arrA = toSuffixArray(left);
+        MyString[] arrB = toSuffixArray(right);
 
-      sum = 1+2+3
+        int i = 0, j = 0;
+        int backlinkA = -1, backlinkB = -1; // locations of overlapping strings
+        int maxOverlap = -1; // max amount of overlap recorded so far
+//        while(i < arrA.length && j < arrB.length) {
+        for(MyString a : arrA)  {
+            for(MyString b : arrB) {
+//            MyString a = arrA[i];
+//            MyString b = arrB[j];
 
-      2  3
-      1  2
-      0  1
-         1  2  3
-                           1   2   12  3  13   23  123
-         mask 1 - 7       001 010 011 100 101 110 111
+                int overlapCount = computeOverlap(a.str, b.str, distance);
+                if (overlapCount > maxOverlap) {
+                    maxOverlap = overlapCount;
+                    backlinkA = a.backlink;
+                    backlinkB = b.backlink;
+                }
 
-
-         001 -> 1
-         011 = f(001) ^ arr[010]
-
-         111 = MEMO.get(011) ^ arr[100]
-
-
-         1100101101 = MEMO.get(100101101) ^ arr[9]
-
-         */
-
-        for(BigInteger mask = BigInteger.ONE; mask.compareTo(BigInteger.ONE.shiftLeft(arr.length)) < 0; mask = mask.add(BigInteger.ONE)) {
-            int highestBit = mask.bitLength() - 1;
-            BigInteger maskMinusHighestBit = mask.flipBit(highestBit);
-            int xord = MEMO.get(maskMinusHighestBit) ^ arr[highestBit];
-
-            MEMO.put(mask, xord);
-            sum = (xord + sum) % MOD;
+//                int compRes = a.str.compareTo(b.str);
+//                if (compRes == 0) {
+//                    ++i;
+//                    ++j;
+//                } else if (compRes < 0) { // a < b
+//                    ++i;
+//                } else {
+//                    ++j;
+//                }
+            }
         }
 
-        return sum;
+//        return resolve(left, right, distance, backlinkA, backlinkB, maxOverlap);
+        return maxOverlap;
     }
 
-    private static int[] strArray2intArray(String[] strs) {
-        int[] ret = new int[strs.length];
-        for (int i = 0; i < strs.length; ++i) {
-            ret[i] = Integer.parseInt(strs[i]);
+    private static int resolve(String a, String b, int distance, int backlinkA, int backlinkB, int overlap) {
+        int idxA = backlinkA, idxB = backlinkB;
+        int finalOverlap = overlap;
+
+        int availableDistance = distance;
+
+        while(availableDistance > 0) {
+            if(idxA > 0 && idxB > 0) {
+                --idxA; --idxB; ++finalOverlap;
+                if(a.charAt(idxA) != b.charAt(idxB))
+                    --availableDistance;
+            } else if(((idxA + finalOverlap) < a.length() - 1) && ((idxB + finalOverlap) < b.length() - 1)) {
+                ++finalOverlap;
+                if(a.charAt(idxA + finalOverlap) != b.charAt(idxB + finalOverlap))
+                    --availableDistance;
+            } else {
+                break;
+            }
         }
-        return ret;
+        return finalOverlap;
     }
 
+    private static int computeOverlap(String a, String b, int distance) {
+        int i = 0;
+        while(i < a.length()
+                && i < b.length()
+                && (a.charAt(i) == b.charAt(i) || distance-- > 0))
+            ++i;
+
+        return i;
+    }
+
+    private static final class MyString implements Comparable<MyString>{
+        public final int backlink;
+        public final String str;
+        MyString(int backlink, String str) { this.backlink = backlink; this.str = str;}
+
+        @Override
+        public int compareTo(MyString other) {
+            return str.compareTo(other.str);
+        }
+        @Override
+        public String toString() {
+            return str;
+        }
+    }
+
+    private static MyString[] toSuffixArray(String s) {
+        MyString[] arr = new MyString[s.length()];
+        for(int i =0; i < s.length(); ++i) {
+            arr[i] = new MyString(i, s.substring(i));
+        }
+        Arrays.sort(arr);
+        return arr;
+    }
 }

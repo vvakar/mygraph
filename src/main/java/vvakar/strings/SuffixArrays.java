@@ -32,9 +32,9 @@ public class SuffixArrays {
 //
 
         int N = 30;
-        countTopSubstringsOfSize("/Users/vvakar/Downloads/mobydick.txt", N);
+//        countTopSubstringsOfSize("/Users/vvakar/Downloads/mobydick.txt", N);
         countTopSubstringsOfSize("/Users/vvakar/Downloads/pride.txt", N);
-        countTopSubstringsOfSize("/Users/vvakar/Downloads/janeeyre.txt", N);
+//        countTopSubstringsOfSize("/Users/vvakar/Downloads/janeeyre.txt", N);
     }
 
     public static void countTopSubstringsOfSize(String filename, int size) throws Exception {
