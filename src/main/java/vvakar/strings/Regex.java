@@ -12,33 +12,8 @@ import java.util.Set;
  *         Date: 1/2/15
  */
 public class Regex {
-    public static void main(String[] asfd) {
-//        System.out.println(prettyPrintFindRegex("abcdefg", "abc"));
-//        System.out.println(prettyPrintFindRegex("abcdefg", "xyz"));
-//        System.out.println(prettyPrintFindRegex("abcdefg", "def"));
-//
-//        System.out.println(prettyPrintFindRegex("abcdefg", "def."));
-//        System.out.println(prettyPrintFindRegex("abcdefg", "cd..."));
-//        System.out.println(prettyPrintFindRegex("abcdefg", "cd...."));
-//
-//
-//        System.out.println(prettyPrintFindRegex("abcdefg", "d(e|x)"));
-//        System.out.println(prettyPrintFindRegex("abcdefg", "d(x|e)"));
-//        System.out.println(prettyPrintFindRegex("abcdefg", "cd(ef|e)."));
-//        System.out.println(prettyPrintFindRegex("abcdefg", "(a|b)cd...."));
-//
-//
-//        System.out.println(prettyPrintFindRegex("abcdefg", "d(e*|x)"));
-//        System.out.println(prettyPrintFindRegex("abcdefg", "d(x*|e)"));
-//        System.out.println(prettyPrintFindRegex("abcdefg", "cd(ef*|e)."));
-//        System.out.println(prettyPrintFindRegex("abcdefg", "(a|b*)cd...."));
-//        System.out.println(prettyPrintFindRegex("abcdefg", "(a|b*)cd..."));
 
-        System.out.println(prettyPrintFindRegex("abcdefg", "ab(xy)*cd"));
-
-    }
-
-    private static boolean findRegex(String str, String regex) {
+    public static boolean findRegex(String str, String regex) {
         Graph graph = parseRegex(regex);
 
         Set<Integer> currentStates = new HashSet<Integer>();
@@ -55,9 +30,24 @@ public class Regex {
                     char expectedChar = entry.getKey();
                     if (c == expectedChar || expectedChar == '.') {
                         nextStates.add(entry.getValue());
+
+
+                        // append next epsylons immediately - free pass discovered
+                        Vertex nextVertex = graph.vertices.get(entry.getValue());
+                        Deque<Integer> epsylons = new ArrayDeque<Integer>(nextVertex.epsylons);
+                        while(!epsylons.isEmpty()) {
+                            int nextEpsylon = epsylons.poll();
+
+                            if(!nextStates.contains(nextEpsylon)) {
+                                epsylons.addAll(graph.vertices.get(nextEpsylon).epsylons);
+                            }
+
+                            nextStates.add(nextEpsylon);
+                        }
                     }
                 }
 
+                // Append all current epsylons
                 Deque<Integer> epsylons = new ArrayDeque<Integer>(currentVertex.epsylons);
                 while(!epsylons.isEmpty()) {
                     int nextEpsylon = epsylons.poll();
@@ -68,6 +58,7 @@ public class Regex {
 
                     nextStates.add(nextEpsylon);
                 }
+
             }
 
             currentStates = nextStates;
@@ -139,30 +130,43 @@ public class Regex {
         for(int i = 0; i < regex.length(); ++i) {
             char c = regex.charAt(i);
 
+            boolean starLookahead = regex.length() > i + 1 && regex.charAt(i + 1) == '*';
+
             switch(c) {
                 case '*':
                     graph.addEpsylonTransition(i, i + 1);
-                    graph.addTransition(i - 1, i, regex.charAt(i - 1));
-                    graph.addEpsylonTransition(i+1, i);
                     break;
                 case '|':
                 case '(':
+                    graph.addEpsylonTransition(i, i+1);
                     stack.push(i);
                     break;
                 case ')':
                     graph.addEpsylonTransition(i, i + 1);
                     int idx = stack.pop();
-                    int prev = idx;
+                    int prev = i;
                     while(regex.charAt(idx) != '(') {
                         graph.addEpsylonTransition(idx, i);
                         prev = idx;
                         idx = stack.pop();
                     }
-                    graph.addEpsylonTransition(idx, prev);
-                    break;
 
+                    if(regex.charAt(prev) == '|') {
+                        // free transition from '(' to '|'
+                        graph.addEpsylonTransition(idx, prev);
+                    }
+
+                    if(starLookahead) {
+                        graph.addEpsylonTransition(idx, i); // '(' to ')' because it's optional
+                        graph.addEpsylonTransition(i+1, idx); // '*' back to '('
+                    }
+                    break;
                 case '.':
                 default: // non-metacharacter
+                    if(starLookahead) {
+                        graph.addEpsylonTransition(i, i+1);
+                        graph.addEpsylonTransition(i+1, i);
+                    }
                     graph.addTransition(i, i + 1, c);
                     break;
             }
@@ -170,47 +174,6 @@ public class Regex {
 
         return graph;
     }
-
-    /**
-     *
-     * 1. implement substring match nfa
-     *   exp: ababc      a -> b -> a -> b -> c
-     *                   .    .    .    .    .
-     *                0    1    2    3    4    5
-     *
-     *   input: a b a b a b c d e f
-     *         0 1 2 3 4 3 4 5
-     *
-     * exp: cd.       c -> d -> .
-     *              0   1    2    3
-     *
-     * DFA:
-     *
-     * . 1 2 3 4 5
-     * d 0 0 0 0 0
-     * c 0 0 0 0 5
-     * b 0 2 0 4 0
-     * a 1 1 3 1 3
-     *   0 1 2 3 4  (expr. length)
-     *
-     *
-     */
-    private static final int MAX_CHAR = 256;
-    private static int[][] toDFA(String regex) {
-        int[][] dfa = new int[regex.length()][MAX_CHAR];
-
-        for(int i = 0; i < regex.length(); ++i) {
-            for(char c = 0; c < MAX_CHAR; ++c) {
-                if(c == regex.charAt(i) || regex.charAt(i) == '.')
-                    dfa[i][c] = i + 1; // letter match or '.' - advance
-                else
-                    dfa[i][c] = 0; // default go back to the top
-            }
-        }
-
-        return dfa;
-    }
-
 
     private static String prettyPrintFindRegex(String str, String regex) {
         return str + "/" + regex + "/" + "  => " + findRegex(str, regex);
