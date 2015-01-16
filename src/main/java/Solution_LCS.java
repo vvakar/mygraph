@@ -1,5 +1,6 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 
 /**
  * @author vvakar
@@ -18,6 +19,56 @@ public class Solution_LCS {
     }
 
     /*
+27  0  1  1  1  1  2  2  2  3  3  3  4  4  4  4  4  5  5  5  5  5 5  5  5 5  5  5  5  5 5  5  5  5  5  5  5 5  5  5  5  5  6  6  7  7  7  7  7  8  8
+76  0  0  1  1  1  2  2  2  3  3  3  4  4  4  4  4  5  5  5  5  5 5  5  5 5  5  5  5  5 5  5  5  5  5  5  5 5  5  5  5  5  6  6  7  7  7  7  7  8  8
+88  0  0  1  1  1  1  1  2  3  3  3  4  4  4  4  4  5  5  5  5  5 5  5  5 5  5  5  5  5 5  5  5  5  5  5  5 5  5  5  5  5  5  6  7  7  7  7  7  8  8
+0   0  0  1  1  1  1  1  2  3  3  3  4  4  4  4  4  5  5  5  5  5 5  5  5 5  5  5  5  5 5  5  5  5  5  5  5 5  5  5  5  5  5  6  7  7  7  7  7  8  8
+55  0  0  1  1  1  1  1  2  3  3  3  4  4  4  4  4  5  5  5  5  5 5  5  5 5  5  5  5  5 5  5  5  5  5  5  5 5  5  5  5  5  5  6  7  7  7  7  7  8  8
+99  0  0  1  1  1  1  1  2  2  3  3  4  4  4  4  4  4  4  4  4  4 4  5  5 5  5  5  5  5 5  5  5  5  5  5  5 5  5  5  5  5  5  6  7  7  7  7  7  8  8
+94  0  0  1  1  1  1  1  2  2  3  3  4  4  4  4  4  4  4  4  4  4 4  5  5 5  5  5  5  5 5  5  5  5  5  5  5 5  5  5  5  5  5  6  7  7  7  7  7  8  8
+70  0  0  1  1  1  1  1  2  2  3  3  4  4  4  4  4  4  4  4  4  4 4  4  4 4  4  4  4  4 4  4  4  4  4  4  4 4  5  5  5  5  5  6  7  7  7  7  7  8  8
+34  0  0  1  1  1  1  1  2  2  3  3  4  4  4  4  4  4  4  4  4  4 4  4  4 4  4  4  4  4 4  4  4  4  4  4  4 4  5  5  5  5  5  6  7  7  7  7  7  8  8
+42  0  0  1  1  1  1  1  2  2  3  3  4  4  4  4  4  4  4  4  4  4 4  4  4 4  4  4  4  4 4  4  4  4  4  4  4 4  5  5  5  5  5  6  7  7  7  7  7  8  8
+31  0  0  1  1  1  1  1  2  2  3  3  3  4  4  4  4  4  4  4  4  4 4  4  4 4  4  4  4  4 4  4  4  4  4  4  4 4  5  5  5  5  5  6  7  7  7  7  7  8  8
+47  0  0  1  1  1  1  1  2  2  3  3  3  4  4  4  4  4  4  4  4  4 4  4  4 4  4  4  4  4 4  4  4  4  4  4  4 4  5  5  5  5  5  6  7  7  7  7  7  8  8
+56  0  0  1  1  1  1  1  2  2  3  3  3  4  4  4  4  4  4  4  4  4 4  4  4 4  4  4  4  4 4  4  4  4  4  4  4 4  5  5  5  5  5  6  7  7  7  7  7  8  8
+74  0  0  1  1  1  1  1  2  2  3  3  3  3  4  4  4  4  4  4  4  4 4  4  4 4  4  4  4  4 4  4  4  4  4  4  4 4  5  5  5  5  5  6  7  7  7  7  7  8  8
+69  0  0  1  1  1  1  1  2  2  3  3  3  3  3  3  3  3  3  4  4  4 4  4  4 4  4  4  4  4 4  4  4  4  4  4  4 4  5  5  5  5  5  6  7  7  7  7  7  8  8
+46  0  0  1  1  1  1  1  2  2  3  3  3  3  3  3  3  3  3  3  3  3 4  4  4 4  4  4  4  4 4  4  4  4  4  4  4 4  5  5  5  5  5  6  7  7  7  7  7  8  8
+93  0  0  1  1  1  1  1  2  2  3  3  3  3  3  3  3  3  3  3  3  3 4  4  4 4  4  4  4  4 4  4  4  4  4  4  4 4  4  5  5  5  5  6  7  7  7  7  7  8  8
+88  0  0  1  1  1  1  1  2  2  3  3  3  3  3  3  3  3  3  3  3  3 4  4  4 4  4  4  4  4 4  4  4  4  4  4  4 4  4  5  5  5  5  6  7  7  7  7  7  8  8
+89  0  0  1  1  1  1  1  1  2  3  3  3  3  3  3  3  3  3  3  3  3 4  4  4 4  4  4  4  4 4  4  4  4  4  4  4 4  4  5  5  5  5  6  7  7  7  7  7  7  7
+7   0  0  1  1  1  1  1  1  2  3  3  3  3  3  3  3  3  3  3  3  3 4  4  4 4  4  4  4  4 4  4  4  4  4  4  4 4  4  5  5  5  5  6  6  6  6  7  7  7  7
+94  0  0  1  1  1  1  1  1  2  3  3  3  3  3  3  3  3  3  3  3  3 3  4  4 4  4  4  4  4 4  4  4  4  4  4  4 4  4  5  5  5  5  6  6  6  6  7  7  7  7
+41  0  0  1  1  1  1  1  1  2  2  3  3  3  3  3  3  3  3  3  3  3 3  3  4 4  4  4  4  4 4  4  4  4  4  4  4 4  4  5  5  5  5  6  6  6  6  7  7  7  7
+68  0  0  1  1  1  1  1  1  2  2  3  3  3  3  3  3  3  3  3  3  3 3  3  3 4  4  4  4  4 4  4  4  4  4  4  4 4  4  5  5  5  5  5  6  6  6  7  7  7  7
+37  0  0  1  1  1  1  1  1  2  2  3  3  3  3  3  3  3  3  3  3  3 3  3  3 4  4  4  4  4 4  4  4  4  4  4  4 4  4  5  5  5  5  5  6  6  6  6  6  6  6
+8   0  0  1  1  1  1  1  1  2  2  3  3  3  3  3  3  3  3  3  3  3 3  3  3 4  4  4  4  4 4  4  4  4  4  4  4 4  4  5  5  5  5  5  6  6  6  6  6  6  6
+71  0  0  1  1  1  1  1  1  2  2  3  3  3  3  3  3  3  3  3  3  3 3  3  3 3  4  4  4  4 4  4  4  4  4  4  4 4  4  5  5  5  5  5  6  6  6  6  6  6  6
+57  0  0  1  1  1  1  1  1  2  2  3  3  3  3  3  3  3  3  3  3  3 3  3  3 3  3  3  4  4 4  4  4  4  4  4  4 4  4  5  5  5  5  5  6  6  6  6  6  6  6
+15  0  0  1  1  1  1  1  1  2  2  2  2  2  2  2  2  2  2  2  2  2 3  3  3 3  3  3  4  4 4  4  4  4  4  4  4 4  4  5  5  5  5  5  6  6  6  6  6  6  6
+43  0  0  1  1  1  1  1  1  2  2  2  2  2  2  2  2  2  2  2  2  2 3  3  3 3  3  3  3  4 4  4  4  4  4  4  4 4  4  5  5  5  5  5  6  6  6  6  6  6  6
+89  0  0  1  1  1  1  1  1  2  2  2  2  2  2  2  2  2  2  2  2  2 3  3  3 3  3  3  3  4 4  4  4  4  4  4  4 4  4  5  5  5  5  5  6  6  6  6  6  6  6
+43  0  0  1  1  1  1  1  1  2  2  2  2  2  2  2  2  2  2  2  2  2 3  3  3 3  3  3  3  4 4  4  4  4  4  4  4 4  4  5  5  5  5  5  5  5  5  5  5  5  5
+3   0  0  1  1  1  1  1  1  2  2  2  2  2  2  2  2  2  2  2  2  2 3  3  3 3  3  3  3  3 4  4  4  4  4  4  4 4  4  5  5  5  5  5  5  5  5  5  5  5  5
+23  0  0  1  1  1  1  1  1  2  2  2  2  2  2  2  2  2  2  2  2  2 3  3  3 3  3  3  3  3 3  4  4  4  4  4  4 4  4  5  5  5  5  5  5  5  5  5  5  5  5
+35  0  0  1  1  1  1  1  1  2  2  2  2  2  2  2  2  2  2  2  2  2 3  3  3 3  3  3  3  3 3  3  4  4  4  4  4 4  4  5  5  5  5  5  5  5  5  5  5  5  5
+49  0  0  1  1  1  1  1  1  2  2  2  2  2  2  2  2  2  2  2  2  2 3  3  3 3  3  3  3  3 3  3  4  4  4  4  4 4  4  5  5  5  5  5  5  5  5  5  5  5  5
+38  0  0  1  1  1  1  1  1  2  2  2  2  2  2  2  2  2  2  2  2  2 3  3  3 3  3  3  3  3 3  3  3  4  4  4  4 4  4  5  5  5  5  5  5  5  5  5  5  5  5
+84  0  0  1  1  1  1  1  1  2  2  2  2  2  2  2  2  2  2  2  2  2 3  3  3 3  3  3  3  3 3  3  3  4  4  4  4 4  4  5  5  5  5  5  5  5  5  5  5  5  5
+98  0  0  1  1  1  1  1  1  2  2  2  2  2  2  2  2  2  2  2  2  2 3  3  3 3  3  3  3  3 3  3  3  3  3  4  4 4  4  5  5  5  5  5  5  5  5  5  5  5  5
+47  0  0  1  1  1  1  1  1  2  2  2  2  2  2  2  2  2  2  2  2  2 3  3  3 3  3  3  3  3 3  3  3  3  3  4  4 4  4  4  4  4  4  4  5  5  5  5  5  5  5
+89  0  0  1  1  1  1  1  1  2  2  2  2  2  2  2  2  2  2  2  2  2 3  3  3 3  3  3  3  3 3  3  3  3  3  4  4 4  4  4  4  4  4  4  5  5  5  5  5  5  5
+73  0  0  0  0  0  0  1  1  2  2  2  2  2  2  2  2  2  2  2  2  2 3  3  3 3  3  3  3  3 3  3  3  3  3  4  4 4  4  4  4  4  4  4  4  4  4  4  4  4  4
+24  0  0  0  0  0  0  1  1  2  2  2  2  2  2  2  2  2  2  2  2  2 3  3  3 3  3  3  3  3 3  3  3  3  3  3  3 3  3  3  3  3  3  3  3  3  3  3  3  3  3
+20  0  0  0  0  0  0  0  1  1  1  1  1  1  1  1  1  1  1  1  1  2 2  2  2 2  2  2  2  2 2  2  2  2  2  2  2 2  2  2  2  2  2  2  2  2  3  3  3  3  3
+14  0  0  0  0  0  0  0  1  1  1  1  1  1  1  1  1  1  1  1  1  2 2  2  2 2  2  2  2  2 2  2  2  2  2  2  2 2  2  2  2  2  2  2  2  2  2  2  2  2  2
+88  0  0  0  0  0  0  0  1  1  1  1  1  1  1  1  1  1  1  1  1  1 1  1  1 1  1  1  1  1 1  1  1  1  1  1  1 1  1  1  1  1  1  1  1  1  1  1  1  1  1
+75  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0 0  0  0 0  0  0  0  0 0  0  0  0  0  0  0 0  0  0  0  0  0  0  0  0  0  0  0  0  0
+16 27 89 79 60 76 24 88 55 94 57 42 56 74 24 95 55 33 69 29 14 7 94 41 8 71 12 15 43 3 23 49 84 78 73 63 5 46 98 26 40 76 41 89 24 20 68 14 88 26
+27 76 88 0 55 99 94 70 34 42 31 47 56 74 69 46 93 88 89 7 94 41 68 37 8 71 57 15 43 89 43 3 23 35 49 38 84 98 47 89 73 24 20 14 88 75
+
+
       As = 7 1 99 2 99 3 99
       Bs = 8 1 2 3
 
@@ -39,17 +90,17 @@ i= 0 1 2 3 4 5 6 7 8
    3 9 8 3 9 7 9 7 0
 
 
-            9 0 0 0 0 0 0 0 0 0
-            8 0 0 0 0 0 0 0 0 1
-            7 0 0 0 0 0 0 0 0 0
-            6 0 0 0 0 0 1 0 1 0
-            5 0 0 0 0 0 0 0 0 0
-            4 0 1 0 0 1 0 1 0 0
-            3 0 1 0 0 1 0 1 0 0
-            2 0 1 0 0 1 0 1 0 0
-            1 1 0 0 1 0 0 0 0 0
-       j =  0 1 0 0 1 0 0 0 0 0
-         i =  0 1 2 3 4 5 6 7 8
+           6  1 2 2 2 2 4 4 4 5
+           0  1 2 2 2 2 4 4 4 5
+           2  1 2 2 2 2 4 4 4 4
+           7  1 2 2 2 2 4 4 4 4
+           1  1 2 2 2 3 3 4 4 4
+           9  1 2 2 2 3 3 4 4 4
+           9  1 2 2 2 3 3 4 4 4
+           9  1 2 2 2 3 3 3 3 3
+           3  1 1 1 2 2 2 2 2 2
+       i = 3  1 1 1 1 1 1 1 1 1
+         j =  3 9 8 3 9 7 9 7 0
 
                 3 1 = best of(2 0, 3 0, 2 1)
 
@@ -58,82 +109,72 @@ i= 0 1 2 3 4 5 6 7 8
 
 
 
-            9 0 0 0 0 0 0 0 0 0
-            8 0 0 0 0 0 0 0 0 1
-            7 0 0 0 0 0 0 0 0 0
-            6 0 0 0 0 0 1 0 1 0
-            5 0 0 0 0 0 0 0 0 0
-            4 0 1 0 0 1 0 1 0 0
-            3 0 1 0 0 1 0 1 0 0
-            2 0 1 0 0 1 0 1 0 0
-            1 1 1 1 2 1 1 1 1 1
-       j =  0 1 0 0 1 0 0 0 0 0
-         i =  0 1 2 3 4 5 6 7 8
 
+
+
+
+
+
+
+
+
+
+27  0  1  1  1  1  2  2  2  3  3  3  4  4  4  4  4  5  5  5  5  5 5  5  5 5  5  5  5  5 5  5  5  5  5  5  5 5  5  5  5  5  6  6  7  7  7  7  7  8  8
+76  0  0  1  1  1  2  2  2  3  3  3  4  4  4  4  4  5  5  5  5  5 5  5  5 5  5  5  5  5 5  5  5  5  5  5  5 5  5  5  5  5  6  6  7  7  7  7  7  8  8
+   16 27 89 79 60 76 24 88 55 94 57 42 56 74 24 95 55 33 69 29 14 7 94 41 8 71 12 15 43 3 23 49 84 78 73 63 5 46 98 26 40 76 41 89 24 20 68 14 88 26
+
+
+
+
+
+ 88 75
+
+ 0  1  1  2  2  2  2  3  4  5  6  7  7  8  8  9  9  9  9  9  910 10 11 1213 14 14 1516 17 18 19 20 20 21                        21 21 22 22 23 24
+ 0  1  1  2  2  2  2  3  4  5  6  7  7  8  8  8  8  8  9  9  9 9 10 11 1213 14 14 1516 17 18 19 20 20 21
+16 27 89 79 60 76 24 88 55 94 57 42 56 74 24 95 55 33 69 29 14 7 94 41 8 71 12 15 43 3 23 49 84 78 73 63 5 46 98 26 40 76 41 89 24 20 68 14 88 26
 
      */
 
     private static final class Node {
-        public final int length;
+        private static final Node ZERO = new Node("");
         public final String seq;
-        public final Node parent;
-        public final boolean step;
-        Node(int l, String sel, Node n, boolean step) { this.length = l; this.seq = sel; this.parent = n; this.step = step;}
+        public final int length;
+
+        Node(String sel) { this.seq = sel; this.length = sel.length(); }
         @Override
         public String toString() {
             return seq;
         }
     }
 
+
     private static String doWork(int[]As, int[]Bs) {
-        Node[] prev = new Node[Bs.length];
+        if(As.length == 0 || Bs.length == 0) return "";
 
         String maxSeq = "";
 
-        for(int j = 0; j < Bs.length; ++j) {
-            if(As[0] == Bs[j])
-                prev[j] = new Node(1, Bs[j] + "", null, true);
-            else
-                prev[j] = new Node(0, "", null, false);
-        }
+        Node[] prev = new Node[Bs.length + 1];
+        Arrays.fill(prev, Node.ZERO);
 
-        for(int i = 1; i < As.length; ++i) {
-            Node[] current = new Node[Bs.length];
-            for(int j = 0; j < Bs.length; ++j) {
-                // best of (i-1, j-1 | i j-1 | i -1  j)
+        for(int i = 1; i <= As.length; ++i) {
+            Node[] current = new Node[prev.length];
+            current[0] = Node.ZERO;
+
+            for(int j = 1; j <= Bs.length; ++j) {
+                Node a = prev[j - 1], b = current[j - 1], c = prev[j];
+
+                if(As[i - 1] == Bs[j - 1]) {
+                    a = new Node(a.seq + " " + As[i - 1]);
+                }
+
                 Node parent;
+                if(a.length >= b.length && a.length >= c.length) parent = a;
+                else if(c.length > b.length) parent = c;
+                else parent = b;
 
-                if(j == 0) {
-                    parent = prev[j];
-                } else {
-                    parent = prev[j - 1];
-                    if(!parent.step)
-                        parent = max(parent, current[j - 1], prev[j]);
-                }
-
-                int currentLength = parent.length;
-                String currentSeq = parent.seq;
-
-
-                /*
-                0 1 2 3 4 5 6 7 9    = i
-                3 9 8 3 9 7 9 7 0
-
-                0 1 2 3 4 5 6 7 8 9   = j
-                3 3 9 9 9 1 7 2 0 6
-
-                 */
-                boolean step = false;
-                if(As[i] == Bs[j]) {
-                    ++currentLength;
-                    currentSeq += " " + As[i];
-                    currentSeq = currentSeq.trim();
-                    step = true;
-                }
-
-                current[j] = new Node(currentLength, currentSeq, parent, step);
-                if(currentSeq.length() > maxSeq.length())
-                    maxSeq = currentSeq;
+                current[j] = new Node(parent.seq);
+                if(current[j].seq.length() > maxSeq.length())
+                    maxSeq = current[j].seq;
             }
 
             prev = current;
@@ -141,31 +182,6 @@ i= 0 1 2 3 4 5 6 7 8
 
         return maxSeq;
     }
-
-    private static Node max(Node a, Node b, Node c) {
-        if(a.length > b.length && a.length > c.length) return a;
-        if(b.length > c.length) return b;
-        return c;
-    }
-
-//    private static String recurse(int[]As, int AsIndex, int[]Bs, int BsIndex, String sequenceSoFar) {
-//        if(As.length <= AsIndex || Bs.length <=BsIndex) return sequenceSoFar;
-//
-//        String retval;
-//        if((retval = MEMO.get(sequenceSoFar + " " + AsIndex + " " + BsIndex)) != null) return retval;
-//
-//        if (As[AsIndex] == Bs[BsIndex]) {
-//            sequenceSoFar += " " + As[AsIndex];
-//            retval = recurse(As, AsIndex + 1, Bs, BsIndex + 1, sequenceSoFar);
-//        } else {
-//            String recurseA = recurse(As, AsIndex + 1, Bs, BsIndex, sequenceSoFar);
-//            String recurseB = recurse(As, AsIndex, Bs, BsIndex + 1, sequenceSoFar);
-//            retval = recurseA.length() > recurseB.length() ? recurseA : recurseB;
-//        }
-//
-//        MEMO.put(sequenceSoFar + " " + AsIndex + " " + BsIndex, retval);
-//        return retval;
-//    }
 
     private static int[] strArray2intArray(String[] strs) {
         int[] ret = new int[strs.length];
