@@ -37,16 +37,29 @@ public class Solution_MaxSubarray {
         int maxTotal = 0, maxContiguous = 0;
         int contiguousSumSoFar = 0;
 
+        boolean foundPositive = false;
+
         int arr[] = preprocess(raw);
 
         for(int current : arr) {
-            if(current > 0) maxTotal += current;
+            if(current > 0) {
+                foundPositive = true;
+                maxTotal += current;
+            }
 
             contiguousSumSoFar += current;
             if(contiguousSumSoFar < 0)
                 contiguousSumSoFar = 0;
 
             maxContiguous = Math.max(maxContiguous, contiguousSumSoFar);
+
+        }
+
+        if(!foundPositive) {
+            maxContiguous = maxTotal = Integer.MIN_VALUE;
+            for(int i : raw) {
+                maxContiguous = maxTotal = Math.max(maxContiguous, i);
+            }
         }
 
         return maxContiguous + " " + maxTotal;
