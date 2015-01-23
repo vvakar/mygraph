@@ -1,13 +1,23 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.io.*;
+import java.util.*;
+import java.text.*;
+import java.math.*;
+import java.util.regex.*;
 
 /**
  * @author vvakar
  *         Date: 1/18/15
  */
 public class Solution_LIS {
-    public static void main(String[] args) throws Exception {
+
+
+    public static void main(String[]asdf) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
         int loops = Integer.parseInt(br.readLine().trim());
@@ -16,8 +26,27 @@ public class Solution_LIS {
         for(int i = 0; i < loops; ++i) {
             arr[i] = (Integer.parseInt(br.readLine().trim()));
         }
-        System.out.println(doWork(arr));
+        System.out.println(doLIS_PatienceSort(arr));
+
     }
+
+    /*
+       http://en.wikipedia.org/wiki/Patience_sorting
+     */
+    private static int doLIS_PatienceSort(int[]arr) {
+       ArrayList<Integer> piles = new ArrayList<Integer>();
+       for(int a: arr) {
+           int location = Collections.binarySearch(piles, a);
+           if(location < 0) {
+               location = ~location;
+               if(location == piles.size()) piles.add(a);
+               else piles.set(location, a);
+           }
+       }
+
+        return piles.size();
+    }
+
 
     /*
          2 7 4 3 8
@@ -50,7 +79,7 @@ public class Solution_LIS {
          - what's the longest subsequence ending in < 8?
 
      */
-    static int doWork(int[]arr) {
+    static int doWork_SegmentTree(int[]arr) {
         MaxSegmentTree sTree = new MaxSegmentTree((10 * 10 * 10 * 10 * 10) + 1);
 
         int max = Integer.MIN_VALUE;
