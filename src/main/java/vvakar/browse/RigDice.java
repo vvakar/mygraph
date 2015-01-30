@@ -5,13 +5,11 @@ import com.google.common.collect.Multiset;
 import com.oracle.javafx.jmx.json.JSONDocument;
 import com.oracle.javafx.jmx.json.JSONFactory;
 import com.oracle.javafx.jmx.json.JSONReader;
-
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -21,19 +19,32 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 /**
  * @author vvakar
  *         Date: 1/27/15
  *
+ * TODOs:
+ *  - match term, not word i.e. "machine learning"
+ *  - download full job repo - can we store snapshots?
+ *  - build inverted index - keywords to job ads
+ *  - keyword density reports by region
+ *  - salary reports by region
+ *  - ability to persist reports
+ *  - WHY?
+ *      - to learn more about NLP, string processing, etc
+ *      - to incorporate lucene and learn about it, maybe even join the lucene project
+ *      - to build some useful analytics data to pitch to recruiters as part of my business
+ *      - to build a demoable mobile app that looks like an open-source project
+ *
  */
 public class RigDice {
     private static final String DOMAIN = "http://service.dice.com";
-    private static final int MAX_PAGES = 1;
-    private static final int TOP_N = 500;
+    private static final int MAX_PAGES = 100;
+    private static final int TOP_N_KEYWORDS = 500;
     public static void main(String[]asdf) throws Exception {
-        String skill = "python";
-        URL url = new URL(DOMAIN + "/api/rest/jobsearch/v1/simple.json?areacode=212&text=" + URLEncoder.encode(skill));
+        String skill = "";
+        String areaCode = "";
+        URL url = new URL(DOMAIN + "/api/rest/jobsearch/v1/simple.json?areacode=" + areaCode + "&text=" + URLEncoder.encode(skill));
         System.out.println("Processing results for " + url);
 
         List<Job> jobsLinks = doc2Links(url);
@@ -42,22 +53,20 @@ public class RigDice {
         for(Job job : jobsLinks) {
             String page = url2String(job.detailUrl);
             String salary = extractSalary(page);
-            wordCounts.addAll(extractWords(page));
+            wordCounts.addAll(extractWords(removeScriptTags(page)));
             if(salary != null) System.out.println(salary + "  " + job);
         }
 
-        for(TopNItem word : getTopN(wordCounts, jobsLinks.size())) System.out.println(word);
+        for(TopNItem word : getTopN(wordCounts)) System.out.println(word);
     }
 
-    private static TopNItem[] getTopN(Multiset<String> wordCounts, int samples) {
+    private static TopNItem[] getTopN(Multiset<String> wordCounts) {
         PriorityQueue<TopNItem> priorityQueue = new PriorityQueue<TopNItem>();
         for(Multiset.Entry<String> entry : wordCounts.entrySet()) {
             int count = entry.getCount();
-            if(count == samples) continue; // words that appear in every single item are probably stopwords
-
             String elem = entry.getElement();
             priorityQueue.add(new TopNItem(elem, count));
-            if(priorityQueue.size() > TOP_N) priorityQueue.poll();
+            if(priorityQueue.size() > TOP_N_KEYWORDS) priorityQueue.poll();
         }
 
         TopNItem[] topNs = priorityQueue.toArray(new TopNItem[0]);
@@ -65,12 +74,22 @@ public class RigDice {
         return topNs;
     }
 
-    private static Pattern WORDS_PATTERN = Pattern.compile("\\w*", Pattern.CASE_INSENSITIVE);
+    private static Pattern REMOVE_SCRIPT_PATTERN = Pattern.compile("<script.*?/script>", Pattern.CASE_INSENSITIVE);
+    static String removeScriptTags(String text) {
+        return REMOVE_SCRIPT_PATTERN.matcher(text).replaceAll("");
+    }
+
+    private static Pattern WORDS_PATTERN = Pattern.compile("\\w*[+#]*", Pattern.CASE_INSENSITIVE);
     static Set<String> extractWords(String text) {
+        Set<String> keywords = Util.getKeywords();
         Set<String> rets = new HashSet<String>();
         if(text == null) return rets;
         Matcher matcher = WORDS_PATTERN.matcher(text);
-        while(matcher.find()) rets.add(matcher.group().trim().toLowerCase());
+        while(matcher.find()) {
+            String found = matcher.group().trim().toLowerCase();
+            if(keywords.contains(found))
+                rets.add(found);
+        }
         return rets;
     }
 
@@ -105,7 +124,7 @@ public class RigDice {
         final List<Job> jobs = new LinkedList<Job>();
         final JSONFactory factory = JSONFactory.instance();
         URL url = landing;
-        String nextUrl = null;
+        String nextUrl;
 
         int i = 0;
         do {
@@ -117,8 +136,9 @@ public class RigDice {
                 JSONDocument job = (JSONDocument) obj;
                 String title = job.getString("jobTitle");
                 String company = job.getString("company");
+                String location = job.getString("location");
                 String detailUrl = job.getString("detailUrl");
-                jobs.add(new Job(title, company, detailUrl));
+                jobs.add(new Job(title, company, location, detailUrl));
             }
             nextUrl = doc.getString("nextUrl");
             url = new URL(DOMAIN + nextUrl);
@@ -129,10 +149,10 @@ public class RigDice {
 
 
     private static final class Job {
-        public final String title, company;
+        public final String title, company, location;
         public final URL detailUrl;
-        Job(String title, String company, String detailUrl) throws Exception {
-            this.title = title; this.company = company;this.detailUrl = new URL(detailUrl);
+        Job(String title, String company, String location, String detailUrl) throws Exception {
+            this.title = title; this.company = company; this.location = location; this.detailUrl = new URL(detailUrl);
         }
 
         @Override
@@ -154,21 +174,8 @@ public class RigDice {
 
         @Override
         public String toString() {
-            return title + " @ " + company + " " + detailUrl;
+            return title + " @ " + company + " in " + location + " " + detailUrl;
         }
-    }
-
-    private static Pattern JOBS_PATTERN = Pattern.compile("https://www.dice.com/jobs/.*?\"");
-    static List<URL> text2Links(String text) throws Exception {
-        List<URL> retVal = new ArrayList<URL>();
-        Matcher matcher = JOBS_PATTERN.matcher(text);
-
-        while(matcher.find()) {
-            String url = matcher.group();
-            retVal.add(new URL(url.substring(0, url.length() - 1))); // would prefer a regex that can skip ending double quote but this works
-        }
-
-        return retVal;
     }
 
     private static class TopNItem implements Comparable<TopNItem>{
@@ -185,8 +192,5 @@ public class RigDice {
         public String toString() {
             return word + " -> " + occurrences;
         }
-    };
-
-
-
+    }
 }

@@ -14,26 +14,11 @@ import static org.junit.Assert.*;
 public class RigDiceTest {
 
     @Test
-    public void testCanParseLinks() throws Exception {
-        List<URL> links =  RigDice.text2Links("\n" +
-                        "\t        \t\t\t\t\t<div class='mTB2'>\n" +
-                        "\t        \t\t\t\t\t\t<a href='#' class='m' onclick='javascript:displayfullcontent(this);javascript:return false;'>more</a>\n" +
-                        "\t        \t\t\t\t\t</div>\n" +
-                        "        \t\t\t\t\t</div>\n" +
-                        "\t\t\t\t\t \t\t\t\t\t\t<input type=\"checkbox\" class=\"fchk\" chkTyp=\"djt\" chkVal=\"Software+Engineer\" />\n" +
-                        "\t\t\t\t\t \t\t\t\t<a href=\"https://www.dice.com/jobs/q-java-l-New+York%2C+NY-djt-Software+Engineer-jobs.html\">Software Engineer</a>\n" +
-                        "\t\t\t\t\t \t\t\t\t\t\t<input type=\"checkbox\" class=\"fchk\" chkTyp=\"djt\" chkVal=\"Android+Developer\" />\n" +
-                        "\t\t\t\t\t \t\t\t\t<a href=\"https://www.dice.com/jobs/q-java-l-New+York%2C+NY-djt-Android+Developer-jobs.html\">Android Developer</a>\n" +
-                        "\t\t\t\t\t \t\t\t\t\t\t<input type=\"checkbox\" class=\"fchk\" chkTyp=\"djt\" chkVal=\"Java+Architect\" />\n" +
-                        "\t\t\t\t\t \t\t\t\t<a href=\"https://www.dice.com/jobs/q-java-l-New+York%2C+NY-djt-Java+Architect-jobs.html\">Java Architect</a>\n" +
-                        "\t\t\t\t\t \t\t\t</div>\n");
-
-        assertEquals(ImmutableList.of(
-                new URL("https://www.dice.com/jobs/q-java-l-New+York%2C+NY-djt-Software+Engineer-jobs.html"),
-                new URL("https://www.dice.com/jobs/q-java-l-New+York%2C+NY-djt-Android+Developer-jobs.html"),
-                new URL("https://www.dice.com/jobs/q-java-l-New+York%2C+NY-djt-Java+Architect-jobs.html")
-                ),links);
-
+    public void testextractWords() {
+        assertTrue(RigDice.extractWords("java whatever").contains("java"));
+        assertTrue(RigDice.extractWords("java c++ whatever").contains("c++"));
+        assertTrue(RigDice.extractWords("java c# whatever").contains("c#"));
+        assertTrue(RigDice.extractWords("java F# whatever").contains("f#"));
     }
 
     @Test
@@ -44,6 +29,11 @@ public class RigDiceTest {
         assertEquals("[100,100-200,300]", RigDice.extractSalary("asdasdf 100,100-200,300 adfasdf"));
         assertEquals("[$100,100 - $200,300]", RigDice.extractSalary("asdasdf $100,100 - $200,300 adfasdf"));
         assertEquals(null, RigDice.extractSalary("sad 20000k fds"));
+    }
+
+    @Test
+    public void testRemoveScriptTags() {
+        assertEquals("abc", RigDice.removeScriptTags("a<script> sdfs  sdf sd s f sdf </script>b<script ffs ds> </script>c<script></script>"));
     }
 
 }
