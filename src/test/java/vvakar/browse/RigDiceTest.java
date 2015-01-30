@@ -38,9 +38,11 @@ public class RigDiceTest {
 
     @Test
     public void testExtractSalaryRegex() {
-        assertEquals("100k", RigDice.extractSalary("asdfasdf 100k asdfasdf "));
-        assertEquals("100k - 200k", RigDice.extractSalary("asdasdf 100k - 200k adfasdf"));
-        assertEquals("100100-200300", RigDice.extractSalary("asdasdf 100100-200300 adfasdf"));
+        assertEquals("[100k]", RigDice.extractSalary("asdfasdf 100k asdfasdf "));
+        assertEquals("[100k - 200k]", RigDice.extractSalary("asdasdf 100k - 200k adfasdf"));
+        assertEquals("[100100-200300]", RigDice.extractSalary("asdasdf 100100-200300 adfasdf"));
+        assertEquals("[100,100-200,300]", RigDice.extractSalary("asdasdf 100,100-200,300 adfasdf"));
+        assertEquals("[$100,100 - $200,300]", RigDice.extractSalary("asdasdf $100,100 - $200,300 adfasdf"));
         assertEquals(null, RigDice.extractSalary("sad 20000k fds"));
     }
 

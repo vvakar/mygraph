@@ -12,6 +12,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,11 +30,11 @@ import java.util.regex.Pattern;
 public class RigDice {
     private static final String DOMAIN = "http://service.dice.com";
     private static final int MAX_PAGES = 1;
-    private static final int TOP_N = 100;
+    private static final int TOP_N = 500;
     public static void main(String[]asdf) throws Exception {
         String skill = "python";
-        URL url = new URL(DOMAIN + "/api/rest/jobsearch/v1/simple.json?areacode=212&skill=" + URLEncoder.encode(skill));
-
+        URL url = new URL(DOMAIN + "/api/rest/jobsearch/v1/simple.json?areacode=212&text=" + URLEncoder.encode(skill));
+        System.out.println("Processing results for " + url);
 
         List<Job> jobsLinks = doc2Links(url);
         Multiset<String> wordCounts = HashMultiset.create();
@@ -59,7 +60,9 @@ public class RigDice {
             if(priorityQueue.size() > TOP_N) priorityQueue.poll();
         }
 
-        return priorityQueue.toArray(new TopNItem[0]);
+        TopNItem[] topNs = priorityQueue.toArray(new TopNItem[0]);
+        Arrays.sort(topNs);
+        return topNs;
     }
 
     private static Pattern WORDS_PATTERN = Pattern.compile("\\w*", Pattern.CASE_INSENSITIVE);
@@ -71,7 +74,7 @@ public class RigDice {
         return rets;
     }
 
-    private static Pattern SALARY_PATTERN = Pattern.compile("(\\d{6}-\\d{6})|(\\$?([1-3][\\d][\\d]k?\\W*)?[1-3][\\d][\\d]k)", Pattern.CASE_INSENSITIVE);
+    private static Pattern SALARY_PATTERN = Pattern.compile("(\\$?\\d{3},?\\d{3}\\s*-\\s*\\$?\\d{3},?\\d{3})|(\\$?([1-3][\\d][\\d]k?\\W*)?[1-3][\\d][\\d]k)", Pattern.CASE_INSENSITIVE);
     static String extractSalary(String text) {
         if(text == null) return null;
         Matcher matcher = SALARY_PATTERN.matcher(text);
@@ -175,7 +178,7 @@ public class RigDice {
         TopNItem(String elem, int count) { this.word = elem; this.occurrences = count; }
         @Override
         public int compareTo(TopNItem o) {
-            return -Integer.compare(occurrences, o.occurrences);
+            return Integer.compare(occurrences, o.occurrences);
         }
 
         @Override
