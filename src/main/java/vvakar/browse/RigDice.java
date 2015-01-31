@@ -39,22 +39,22 @@ import java.util.regex.Pattern;
  */
 public class RigDice {
     private static final String DOMAIN = "http://service.dice.com";
-    private static final int MAX_PAGES = 100;
+    private static final int MAX_PAGES = 3;
     private static final int TOP_N_KEYWORDS = 500;
     public static void main(String[]asdf) throws Exception {
-        String skill = "";
-        String areaCode = "";
+        String skill = "java";
+        String areaCode = "212";
         URL url = new URL(DOMAIN + "/api/rest/jobsearch/v1/simple.json?areacode=" + areaCode + "&text=" + URLEncoder.encode(skill));
         System.out.println("Processing results for " + url);
 
-        List<Job> jobsLinks = doc2Links(url);
+        List<? extends JobAd> jobsLinks = extractJobAds(url);
         Multiset<String> wordCounts = HashMultiset.create();
 
-        for(Job job : jobsLinks) {
-            String page = url2String(job.detailUrl);
+        for(JobAd jobAd : jobsLinks) {
+            String page = url2String(jobAd.detailUrl);
             String salary = extractSalary(page);
             wordCounts.addAll(extractWords(removeScriptTags(page)));
-            if(salary != null) System.out.println(salary + "  " + job);
+            if(salary != null) System.out.println(salary + "  " + jobAd);
         }
 
         for(TopNItem word : getTopN(wordCounts)) System.out.println(word);
@@ -120,8 +120,8 @@ public class RigDice {
         return txt;
     }
 
-    private static List<Job> doc2Links(URL landing) throws Exception {
-        final List<Job> jobs = new LinkedList<Job>();
+    private static List<JobAd> extractJobAds(URL landing) throws Exception {
+        final List<JobAd> jobAds = new LinkedList<JobAd>();
         final JSONFactory factory = JSONFactory.instance();
         URL url = landing;
         String nextUrl;
@@ -138,20 +138,20 @@ public class RigDice {
                 String company = job.getString("company");
                 String location = job.getString("location");
                 String detailUrl = job.getString("detailUrl");
-                jobs.add(new Job(title, company, location, detailUrl));
+                jobAds.add(new JobAd(title, company, location, detailUrl));
             }
             nextUrl = doc.getString("nextUrl");
             url = new URL(DOMAIN + nextUrl);
         } while(++i < MAX_PAGES && nextUrl != null);
 
-        return jobs;
+        return jobAds;
     }
 
 
-    private static final class Job {
+    private static final class JobAd {
         public final String title, company, location;
         public final URL detailUrl;
-        Job(String title, String company, String location, String detailUrl) throws Exception {
+        JobAd(String title, String company, String location, String detailUrl) throws Exception {
             this.title = title; this.company = company; this.location = location; this.detailUrl = new URL(detailUrl);
         }
 
@@ -160,9 +160,9 @@ public class RigDice {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
 
-            Job job = (Job) o;
+            JobAd jobAd = (JobAd) o;
 
-            if (detailUrl != null ? !detailUrl.equals(job.detailUrl) : job.detailUrl != null) return false;
+            if (detailUrl != null ? !detailUrl.equals(jobAd.detailUrl) : jobAd.detailUrl != null) return false;
 
             return true;
         }
