@@ -19,6 +19,8 @@ public class RigDiceTest {
         assertTrue(RigDice.extractWords("java c++ whatever").contains("c++"));
         assertTrue(RigDice.extractWords("java c# whatever").contains("c#"));
         assertTrue(RigDice.extractWords("java F# whatever").contains("f#"));
+        assertTrue(RigDice.extractWords(null).isEmpty());
+
     }
 
     @Test
@@ -35,5 +37,4 @@ public class RigDiceTest {
     public void testRemoveScriptTags() {
         assertEquals("abc", RigDice.removeScriptTags("a<script> sdfs  sdf sd s f sdf </script>b<script ffs ds> </script>c<script></script>"));
     }
-
 }

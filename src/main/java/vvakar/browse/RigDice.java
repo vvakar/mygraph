@@ -1,10 +1,14 @@
 package vvakar.browse;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 import com.oracle.javafx.jmx.json.JSONDocument;
 import com.oracle.javafx.jmx.json.JSONFactory;
 import com.oracle.javafx.jmx.json.JSONReader;
+import com.sun.istack.internal.NotNull;
+
+import javax.annotation.Nullable;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -178,19 +182,20 @@ public class RigDice {
         }
     }
 
-    private static class TopNItem implements Comparable<TopNItem>{
-        String word;
-        int occurrences;
+    private static class TopNItem<T> implements Comparable<TopNItem<?>>{
+        final T item;
+        private final int occurrences;
 
-        TopNItem(String elem, int count) { this.word = elem; this.occurrences = count; }
+        TopNItem(T elem, int count) { this.item = elem; this.occurrences = count; }
         @Override
-        public int compareTo(TopNItem o) {
+        public int compareTo(@Nullable TopNItem<?> o) {
+            Preconditions.checkNotNull(o);
             return Integer.compare(occurrences, o.occurrences);
         }
 
         @Override
         public String toString() {
-            return word + " -> " + occurrences;
+            return item + " -> " + occurrences;
         }
     }
 }
