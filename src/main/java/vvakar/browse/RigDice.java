@@ -46,7 +46,7 @@ public class RigDice {
     private static final int MAX_PAGES = 3;
     private static final int TOP_N_KEYWORDS = 500;
     public static void main(String[]asdf) throws Exception {
-        String skill = "java";
+        String skill = "hadoop";
         String areaCode = "212";
         URL url = new URL(DOMAIN + "/api/rest/jobsearch/v1/simple.json?areacode=" + areaCode + "&text=" + URLEncoder.encode(skill));
         System.out.println("Processing results for " + url);

@@ -34,6 +34,9 @@ Amiga E
 AMOS
 AMPL
 analytics
+angular
+angular.js
+angularjs
 Android
 apache
 AppleScript
@@ -57,6 +60,9 @@ Bash
 bc
 BCPL
 BeanShell
+backbone
+backbone.js
+backbonejs
 Batch
 Bertrand
 BETA
