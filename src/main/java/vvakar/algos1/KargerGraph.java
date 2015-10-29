@@ -1,6 +1,7 @@
 package vvakar.algos1;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,17 +18,23 @@ import java.util.stream.Collectors;
 public class KargerGraph {
 
     public static void main(String[] asdf) throws Exception {
+        KargerGraph graph = parseGraph("KargerMinCut.txt");
+        System.out.println("HELLOOO " + graph.minCut());
+    }
+
+    public static KargerGraph parseGraph(String filename) throws IOException {
         KargerGraph graph = new KargerGraph();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(KargerGraph.class.getClassLoader().getResourceAsStream("KargerMinCut.txt")));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(KargerGraph.class.getClassLoader().getResourceAsStream(filename)));
         while (reader.ready()) {
             String[] line = reader.readLine().split("\\s+");
             String v = line[0];
             for (int i = 1; i < line.length; ++i) {
-                graph.recordEdge(v, line[i]);
+                Edge edge = new Edge(v, line[i], 0);
+                if (!graph.allEdges.contains(edge)) // input specifies duplicate edges
+                    graph.recordEdge(v, line[i]);
             }
         }
-
-        System.out.println("HELLOOO " + graph.minCut());
+        return graph;
     }
 
     public Map<String, Set<Edge>> verticesToEdges = new HashMap<>();
@@ -106,6 +113,9 @@ public class KargerGraph {
             min = Math.min(min, allEdges.size());
             verticesToEdges = clone(verticesToEdgesOriginal);
             allEdges = verticesToEdges.values().stream().flatMap(s -> s.stream()).collect(Collectors.toSet());
+
+
+            if(i % 100 == 0) System.out.println(i + ": " + min);
         }
 
         return min;

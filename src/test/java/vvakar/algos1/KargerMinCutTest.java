@@ -105,4 +105,20 @@ public class KargerMinCutTest {
 
         assertEquals(3, graph.minCut());
     }
+
+
+    @Test
+    public void testTc1() throws Exception {
+       assertEquals(2, parseGraph("KargerMinCuttc1.txt").minCut());
+    }
+
+    @Test
+    public void testTc2() throws Exception {
+       assertEquals(1, parseGraph("KargerMinCuttc2.txt").minCut());
+    }
+
+    @Test
+    public void testTc3() throws Exception {
+       assertEquals(3, parseGraph("KargerMinCuttc3.txt").minCut());
+    }
 }
